@@ -66,3 +66,19 @@ CREATE TABLE orders (
     CONSTRAINT fk_orders_product
         FOREIGN KEY (mfr, product) REFERENCES products(mfr_id, product_id)
 );
+
+
+CREATE INDEX idx_salesrep_rep_office
+ON salesRep(rep_office);
+
+CREATE INDEX idx_customers_cust_rep
+ON customers(cust_rep);
+
+CREATE INDEX idx_orders_cust
+ON orders(cust);
+
+CREATE INDEX idx_orders_rep
+ON orders(rep);
+
+CREATE INDEX idx_orders_product
+ON orders(mfr, product);
