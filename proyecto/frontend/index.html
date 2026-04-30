@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Gestión de Clientes</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <h1>Clientes</h1>
+
+  <form id="formCliente">
+    <input type="number" id="cust_num" placeholder="ID Cliente" required />
+    <input type="text" id="company" placeholder="Empresa" required />
+    <input type="number" id="cust_rep" placeholder="ID Representante" required />
+    <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
+    <button type="submit">Guardar</button>
+  </form>
+
+  <p id="mensaje"></p>
+
+  <table border="1">
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Empresa</th>
+        <th>Representante</th>
+        <th>Límite de crédito</th>
+      </tr>
+    </thead>
+    <tbody id="tablaClientes"></tbody>
+  </table>
+
+  <script src="app.js"></script>
+</body>
+</html>
