@@ -1,0 +1,35 @@
+services:
+  db:
+    image: postgres:16
+    container_name: proyecto_db
+    restart: always
+    env_file:
+      - .env
+    environment:
+      POSTGRES_DB: proyecto_db
+      POSTGRES_USER: proy2
+      POSTGRES_PASSWORD: secret
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./db/init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  backend:
+    build: ./backend
+    container_name: proyecto_backend
+    restart: always
+    depends_on:
+      - db
+    env_file:
+      - .env
+    ports:
+      - "3000:3000"
+
+  frontend:
+    build: ./frontend
+    container_name: proyecto_frontend
+    restart: always
+    depends_on:
+      - backend
+    ports:
+      - "8080:80"
