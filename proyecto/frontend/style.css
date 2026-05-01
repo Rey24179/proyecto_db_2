@@ -1,10 +1,18 @@
 body {
   font-family: Arial, sans-serif;
   margin: 30px;
+  background-color: #f5f5f5;
+}
+
+h1 {
+  margin-bottom: 20px;
 }
 
 form {
   margin-bottom: 20px;
+  background: white;
+  padding: 15px;
+  border-radius: 8px;
 }
 
 input, button {
@@ -12,12 +20,27 @@ input, button {
   margin: 5px;
 }
 
+button {
+  cursor: pointer;
+}
+
 table {
   border-collapse: collapse;
   width: 100%;
+  background: white;
 }
 
 th, td {
+  border: 1px solid #ccc;
   padding: 10px;
   text-align: left;
+}
+
+th {
+  background-color: #e9e9e9;
+}
+
+#mensaje {
+  font-weight: bold;
+  margin: 10px 0;
 }
