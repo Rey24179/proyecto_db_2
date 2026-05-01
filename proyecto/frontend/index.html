@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CRUD de Clientes</title>
+  <title>Sistema de Gestión</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
@@ -14,11 +14,11 @@
     <input type="text" id="company" placeholder="Empresa" required />
     <input type="number" id="cust_rep" placeholder="ID Representante" required />
     <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
-    <button type="submit" id="btnGuardar">Guardar</button>
-    <button type="button" id="btnCancelar" style="display: none;">Cancelar</button>
+    <button type="submit" id="btnGuardarCliente">Guardar</button>
+    <button type="button" id="btnCancelarCliente" style="display: none;">Cancelar</button>
   </form>
 
-  <p id="mensaje"></p>
+  <p id="mensajeCliente"></p>
 
   <table>
     <thead>
@@ -31,6 +31,36 @@
       </tr>
     </thead>
     <tbody id="tablaClientes"></tbody>
+  </table>
+
+  <hr />
+
+  <h1>Gestión de Productos</h1>
+
+  <form id="formProducto">
+    <input type="text" id="mfr_id" placeholder="Fabricante" maxlength="3" required />
+    <input type="text" id="product_id" placeholder="ID Producto" maxlength="5" required />
+    <input type="text" id="description" placeholder="Descripción" required />
+    <input type="number" step="0.01" id="price" placeholder="Precio" required />
+    <input type="number" id="qty_on_hand" placeholder="Cantidad en stock" required />
+    <button type="submit" id="btnGuardarProducto">Guardar</button>
+    <button type="button" id="btnCancelarProducto" style="display: none;">Cancelar</button>
+  </form>
+
+  <p id="mensajeProducto"></p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Fabricante</th>
+        <th>ID Producto</th>
+        <th>Descripción</th>
+        <th>Precio</th>
+        <th>Stock</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody id="tablaProductos"></tbody>
   </table>
 
   <script src="app.js"></script>

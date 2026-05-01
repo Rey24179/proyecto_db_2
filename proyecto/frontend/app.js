@@ -1,29 +1,32 @@
-const API = "http://localhost:3000/customers";
+const API_CLIENTES = "http://localhost:3000/customers";
+const API_PRODUCTOS = "http://localhost:3000/products";
 
-const form = document.getElementById("formCliente");
+/* =========================
+   CLIENTES
+========================= */
+const formCliente = document.getElementById("formCliente");
 const tablaClientes = document.getElementById("tablaClientes");
-const mensaje = document.getElementById("mensaje");
-const btnGuardar = document.getElementById("btnGuardar");
-const btnCancelar = document.getElementById("btnCancelar");
+const mensajeCliente = document.getElementById("mensajeCliente");
+const btnGuardarCliente = document.getElementById("btnGuardarCliente");
+const btnCancelarCliente = document.getElementById("btnCancelarCliente");
 
 const inputCustNum = document.getElementById("cust_num");
 const inputCompany = document.getElementById("company");
 const inputCustRep = document.getElementById("cust_rep");
 const inputCreditLimit = document.getElementById("credit_limit");
 
-let editando = false;
+let editandoCliente = false;
 let idClienteEditando = null;
 
 async function cargarClientes() {
   try {
-    const respuesta = await fetch(API);
+    const respuesta = await fetch(API_CLIENTES);
     const clientes = await respuesta.json();
 
     tablaClientes.innerHTML = "";
 
     clientes.forEach((cliente) => {
       const fila = document.createElement("tr");
-
       fila.innerHTML = `
         <td>${cliente.cust_num}</td>
         <td>${cliente.company}</td>
@@ -34,16 +37,15 @@ async function cargarClientes() {
           <button onclick="eliminarCliente(${cliente.cust_num})">Eliminar</button>
         </td>
       `;
-
       tablaClientes.appendChild(fila);
     });
   } catch (error) {
     console.error(error);
-    mensaje.textContent = "Error al cargar clientes";
+    mensajeCliente.textContent = "Error al cargar clientes";
   }
 }
 
-form.addEventListener("submit", async (e) => {
+formCliente.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const cliente = {
@@ -56,12 +58,10 @@ form.addEventListener("submit", async (e) => {
   try {
     let respuesta;
 
-    if (editando) {
-      respuesta = await fetch(`${API}/${idClienteEditando}`, {
+    if (editandoCliente) {
+      respuesta = await fetch(`${API_CLIENTES}/${idClienteEditando}`, {
         method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           company: cliente.company,
           cust_rep: cliente.cust_rep,
@@ -69,11 +69,9 @@ form.addEventListener("submit", async (e) => {
         }),
       });
     } else {
-      respuesta = await fetch(API, {
+      respuesta = await fetch(API_CLIENTES, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify(cliente),
       });
     }
@@ -81,24 +79,24 @@ form.addEventListener("submit", async (e) => {
     const data = await respuesta.json();
 
     if (!respuesta.ok) {
-      mensaje.textContent = data.error || "Ocurrió un error";
+      mensajeCliente.textContent = data.error || "Error en clientes";
       return;
     }
 
-    mensaje.textContent = editando
+    mensajeCliente.textContent = editandoCliente
       ? "Cliente actualizado correctamente"
       : "Cliente creado correctamente";
 
-    resetFormulario();
+    resetFormularioCliente();
     cargarClientes();
   } catch (error) {
     console.error(error);
-    mensaje.textContent = "Error al guardar cliente";
+    mensajeCliente.textContent = "Error al guardar cliente";
   }
 });
 
 function editarCliente(cust_num, company, cust_rep, credit_limit) {
-  editando = true;
+  editandoCliente = true;
   idClienteEditando = cust_num;
 
   inputCustNum.value = cust_num;
@@ -107,9 +105,9 @@ function editarCliente(cust_num, company, cust_rep, credit_limit) {
   inputCustRep.value = cust_rep;
   inputCreditLimit.value = credit_limit;
 
-  btnGuardar.textContent = "Actualizar";
-  btnCancelar.style.display = "inline-block";
-  mensaje.textContent = `Editando cliente ${cust_num}`;
+  btnGuardarCliente.textContent = "Actualizar";
+  btnCancelarCliente.style.display = "inline-block";
+  mensajeCliente.textContent = `Editando cliente ${cust_num}`;
 }
 
 async function eliminarCliente(id) {
@@ -117,42 +115,204 @@ async function eliminarCliente(id) {
   if (!confirmar) return;
 
   try {
-    const respuesta = await fetch(`${API}/${id}`, {
+    const respuesta = await fetch(`${API_CLIENTES}/${id}`, {
       method: "DELETE",
     });
 
     const data = await respuesta.json();
 
     if (!respuesta.ok) {
-      mensaje.textContent = data.error || "Error al eliminar cliente";
+      mensajeCliente.textContent = data.error || "Error al eliminar cliente";
       return;
     }
 
-    mensaje.textContent = "Cliente eliminado correctamente";
+    mensajeCliente.textContent = "Cliente eliminado correctamente";
 
-    if (editando && idClienteEditando === id) {
-      resetFormulario();
+    if (editandoCliente && idClienteEditando === id) {
+      resetFormularioCliente();
     }
 
     cargarClientes();
   } catch (error) {
     console.error(error);
-    mensaje.textContent = "Error al eliminar cliente";
+    mensajeCliente.textContent = "Error al eliminar cliente";
   }
 }
 
-function resetFormulario() {
-  form.reset();
-  editando = false;
+function resetFormularioCliente() {
+  formCliente.reset();
+  editandoCliente = false;
   idClienteEditando = null;
   inputCustNum.disabled = false;
-  btnGuardar.textContent = "Guardar";
-  btnCancelar.style.display = "none";
+  btnGuardarCliente.textContent = "Guardar";
+  btnCancelarCliente.style.display = "none";
 }
 
-btnCancelar.addEventListener("click", () => {
-  resetFormulario();
-  mensaje.textContent = "Edición cancelada";
+btnCancelarCliente.addEventListener("click", () => {
+  resetFormularioCliente();
+  mensajeCliente.textContent = "Edición de cliente cancelada";
+});
+
+/* =========================
+   PRODUCTOS
+========================= */
+const formProducto = document.getElementById("formProducto");
+const tablaProductos = document.getElementById("tablaProductos");
+const mensajeProducto = document.getElementById("mensajeProducto");
+const btnGuardarProducto = document.getElementById("btnGuardarProducto");
+const btnCancelarProducto = document.getElementById("btnCancelarProducto");
+
+const inputMfrId = document.getElementById("mfr_id");
+const inputProductId = document.getElementById("product_id");
+const inputDescription = document.getElementById("description");
+const inputPrice = document.getElementById("price");
+const inputQtyOnHand = document.getElementById("qty_on_hand");
+
+let editandoProducto = false;
+let mfrEditando = null;
+let productEditando = null;
+
+async function cargarProductos() {
+  try {
+    const respuesta = await fetch(API_PRODUCTOS);
+    const productos = await respuesta.json();
+
+    tablaProductos.innerHTML = "";
+
+    productos.forEach((producto) => {
+      const fila = document.createElement("tr");
+      fila.innerHTML = `
+        <td>${producto.mfr_id}</td>
+        <td>${producto.product_id}</td>
+        <td>${producto.description}</td>
+        <td>${producto.price}</td>
+        <td>${producto.qty_on_hand}</td>
+        <td>
+          <button onclick="editarProducto('${producto.mfr_id}', '${producto.product_id}', '${producto.description.replace(/'/g, "\\'")}', ${producto.price}, ${producto.qty_on_hand})">Editar</button>
+          <button onclick="eliminarProducto('${producto.mfr_id}', '${producto.product_id}')">Eliminar</button>
+        </td>
+      `;
+      tablaProductos.appendChild(fila);
+    });
+  } catch (error) {
+    console.error(error);
+    mensajeProducto.textContent = "Error al cargar productos";
+  }
+}
+
+formProducto.addEventListener("submit", async (e) => {
+  e.preventDefault();
+
+  const producto = {
+    mfr_id: inputMfrId.value,
+    product_id: inputProductId.value,
+    description: inputDescription.value,
+    price: parseFloat(inputPrice.value),
+    qty_on_hand: parseInt(inputQtyOnHand.value),
+  };
+
+  try {
+    let respuesta;
+
+    if (editandoProducto) {
+      respuesta = await fetch(`${API_PRODUCTOS}/${mfrEditando}/${productEditando}`, {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          description: producto.description,
+          price: producto.price,
+          qty_on_hand: producto.qty_on_hand,
+        }),
+      });
+    } else {
+      respuesta = await fetch(API_PRODUCTOS, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(producto),
+      });
+    }
+
+    const data = await respuesta.json();
+
+    if (!respuesta.ok) {
+      mensajeProducto.textContent = data.error || "Error en productos";
+      return;
+    }
+
+    mensajeProducto.textContent = editandoProducto
+      ? "Producto actualizado correctamente"
+      : "Producto creado correctamente";
+
+    resetFormularioProducto();
+    cargarProductos();
+  } catch (error) {
+    console.error(error);
+    mensajeProducto.textContent = "Error al guardar producto";
+  }
+});
+
+function editarProducto(mfr_id, product_id, description, price, qty_on_hand) {
+  editandoProducto = true;
+  mfrEditando = mfr_id;
+  productEditando = product_id;
+
+  inputMfrId.value = mfr_id;
+  inputProductId.value = product_id;
+  inputMfrId.disabled = true;
+  inputProductId.disabled = true;
+  inputDescription.value = description;
+  inputPrice.value = price;
+  inputQtyOnHand.value = qty_on_hand;
+
+  btnGuardarProducto.textContent = "Actualizar";
+  btnCancelarProducto.style.display = "inline-block";
+  mensajeProducto.textContent = `Editando producto ${mfr_id}-${product_id}`;
+}
+
+async function eliminarProducto(mfr_id, product_id) {
+  const confirmar = confirm(`¿Deseas eliminar el producto ${mfr_id}-${product_id}?`);
+  if (!confirmar) return;
+
+  try {
+    const respuesta = await fetch(`${API_PRODUCTOS}/${mfr_id}/${product_id}`, {
+      method: "DELETE",
+    });
+
+    const data = await respuesta.json();
+
+    if (!respuesta.ok) {
+      mensajeProducto.textContent = data.error || "Error al eliminar producto";
+      return;
+    }
+
+    mensajeProducto.textContent = "Producto eliminado correctamente";
+
+    if (editandoProducto && mfrEditando === mfr_id && productEditando === product_id) {
+      resetFormularioProducto();
+    }
+
+    cargarProductos();
+  } catch (error) {
+    console.error(error);
+    mensajeProducto.textContent = "Error al eliminar producto";
+  }
+}
+
+function resetFormularioProducto() {
+  formProducto.reset();
+  editandoProducto = false;
+  mfrEditando = null;
+  productEditando = null;
+  inputMfrId.disabled = false;
+  inputProductId.disabled = false;
+  btnGuardarProducto.textContent = "Guardar";
+  btnCancelarProducto.style.display = "none";
+}
+
+btnCancelarProducto.addEventListener("click", () => {
+  resetFormularioProducto();
+  mensajeProducto.textContent = "Edición de producto cancelada";
 });
 
 cargarClientes();
+cargarProductos();
