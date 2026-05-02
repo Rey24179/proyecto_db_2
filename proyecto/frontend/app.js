@@ -316,3 +316,17 @@ btnCancelarProducto.addEventListener("click", () => {
 
 cargarClientes();
 cargarProductos();
+
+async function cargarConsulta(url) {
+  try {
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+
+    document.getElementById("resultadoConsulta").textContent =
+      JSON.stringify(datos, null, 2);
+  } catch (error) {
+    console.error(error);
+    document.getElementById("resultadoConsulta").textContent =
+      "Error al cargar la consulta";
+  }
+}

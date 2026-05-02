@@ -5,6 +5,7 @@ require("dotenv").config();
 const customersRoutes = require("./routes/customers.routes");
 const productsRoutes = require("./routes/products.routes");
 const reportsRoutes = require("./routes/reports.routes");
+const queriesRoutes = require("./routes/queries.routes");
 
 const app = express();
 
@@ -14,6 +15,7 @@ app.use(express.json());
 app.use("/customers", customersRoutes);
 app.use("/products", productsRoutes);
 app.use("/reports", reportsRoutes);
+app.use("/queries", queriesRoutes);
 
 app.get("/", (req, res) => {
   res.json({ mensaje: "API funcionando correctamente" });
