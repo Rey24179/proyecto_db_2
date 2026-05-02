@@ -318,19 +318,60 @@ cargarClientes();
 cargarProductos();
 
 async function cargarConsulta(url) {
+  const encabezado = document.getElementById("encabezadoConsulta");
+  const cuerpo = document.getElementById("cuerpoConsulta");
+  const mensaje = document.getElementById("mensajeConsulta");
+
   try {
     const respuesta = await fetch(url);
     const datos = await respuesta.json();
 
-    document.getElementById("resultadoConsulta").textContent =
-      JSON.stringify(datos, null, 2);
+    encabezado.innerHTML = "";
+    cuerpo.innerHTML = "";
+
+    if (!respuesta.ok) {
+      mensaje.textContent = datos.error || "Error al cargar la consulta";
+      return;
+    }
+
+    if (!datos || datos.length === 0) {
+      mensaje.textContent = "La consulta no devolvió resultados";
+      return;
+    }
+
+    mensaje.textContent = "Consulta cargada correctamente";
+
+    // Crear encabezados dinámicamente
+    const columnas = Object.keys(datos[0]);
+    const filaEncabezado = document.createElement("tr");
+
+    columnas.forEach((columna) => {
+      const th = document.createElement("th");
+      th.textContent = columna;
+      filaEncabezado.appendChild(th);
+    });
+
+    encabezado.appendChild(filaEncabezado);
+
+    // Crear filas dinámicamente
+    datos.forEach((fila) => {
+      const tr = document.createElement("tr");
+
+      columnas.forEach((columna) => {
+        const td = document.createElement("td");
+        td.textContent = fila[columna];
+        tr.appendChild(td);
+      });
+
+      cuerpo.appendChild(tr);
+    });
   } catch (error) {
     console.error(error);
-    document.getElementById("resultadoConsulta").textContent =
-      "Error al cargar la consulta";
+    mensaje.textContent = "Error al cargar la consulta";
+    encabezado.innerHTML = "";
+    cuerpo.innerHTML = "";
   }
 }
-
 const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
 
 const btnCargarReporte = document.getElementById("btnCargarReporte");

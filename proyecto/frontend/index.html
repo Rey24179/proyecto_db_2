@@ -81,18 +81,21 @@
     <tbody id="tablaReporte"></tbody>
   </table>
 
-  <hr />
-  <h1>Consultas SQL</h1>
+<h1>Consultas SQL</h1>
 
-  <button onclick="cargarConsulta('http://localhost:3000/queries/join-clientes')">JOIN Clientes</button>
-  <button onclick="cargarConsulta('http://localhost:3000/queries/join-representantes')">JOIN Representantes</button>
-  <button onclick="cargarConsulta('http://localhost:3000/queries/join-productos')">JOIN Productos</button>
-  <button onclick="cargarConsulta('http://localhost:3000/queries/subquery-credito')">Subquery Crédito</button>
-  <button onclick="cargarConsulta('http://localhost:3000/queries/subquery-representantes')">Subquery Representantes</button>
-  <button onclick="cargarConsulta('http://localhost:3000/queries/cte-clientes')">CTE Clientes</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/join-clientes')">JOIN Clientes</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/join-representantes')">JOIN Representantes</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/join-productos')">JOIN Productos</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/subquery-credito')">Subquery Crédito</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/subquery-representantes')">Subquery Representantes</button>
+<button onclick="cargarConsulta('http://localhost:3000/queries/cte-clientes')">CTE Clientes</button>
 
-  <pre id="resultadoConsulta"></pre>
+<p id="mensajeConsulta"></p>
 
+<table id="tablaConsultas">
+  <thead id="encabezadoConsulta"></thead>
+  <tbody id="cuerpoConsulta"></tbody>
+</table>
   <script src="app.js"></script>
 </body>
 </html>
