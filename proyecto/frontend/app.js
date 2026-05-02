@@ -1,5 +1,6 @@
 const API_CLIENTES = "http://localhost:3000/customers";
 const API_PRODUCTOS = "http://localhost:3000/products";
+const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
 
 /* =========================
    CLIENTES
@@ -314,66 +315,9 @@ btnCancelarProducto.addEventListener("click", () => {
   mensajeProducto.textContent = "Edición de producto cancelada";
 });
 
-cargarClientes();
-cargarProductos();
-
-async function cargarConsulta(url) {
-  const encabezado = document.getElementById("encabezadoConsulta");
-  const cuerpo = document.getElementById("cuerpoConsulta");
-  const mensaje = document.getElementById("mensajeConsulta");
-
-  try {
-    const respuesta = await fetch(url);
-    const datos = await respuesta.json();
-
-    encabezado.innerHTML = "";
-    cuerpo.innerHTML = "";
-
-    if (!respuesta.ok) {
-      mensaje.textContent = datos.error || "Error al cargar la consulta";
-      return;
-    }
-
-    if (!datos || datos.length === 0) {
-      mensaje.textContent = "La consulta no devolvió resultados";
-      return;
-    }
-
-    mensaje.textContent = "Consulta cargada correctamente";
-
-    // Crear encabezados dinámicamente
-    const columnas = Object.keys(datos[0]);
-    const filaEncabezado = document.createElement("tr");
-
-    columnas.forEach((columna) => {
-      const th = document.createElement("th");
-      th.textContent = columna;
-      filaEncabezado.appendChild(th);
-    });
-
-    encabezado.appendChild(filaEncabezado);
-
-    // Crear filas dinámicamente
-    datos.forEach((fila) => {
-      const tr = document.createElement("tr");
-
-      columnas.forEach((columna) => {
-        const td = document.createElement("td");
-        td.textContent = fila[columna];
-        tr.appendChild(td);
-      });
-
-      cuerpo.appendChild(tr);
-    });
-  } catch (error) {
-    console.error(error);
-    mensaje.textContent = "Error al cargar la consulta";
-    encabezado.innerHTML = "";
-    cuerpo.innerHTML = "";
-  }
-}
-const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
-
+/* =========================
+   REPORTE
+========================= */
 const btnCargarReporte = document.getElementById("btnCargarReporte");
 const tablaReporte = document.getElementById("tablaReporte");
 const mensajeReporte = document.getElementById("mensajeReporte");
@@ -407,4 +351,65 @@ async function cargarReporteOrdenesPorCliente() {
   }
 }
 
-btnCargarReporte.addEventListener("click", cargarReporteOrdenesPorCliente);
+if (btnCargarReporte) {
+  btnCargarReporte.addEventListener("click", cargarReporteOrdenesPorCliente);
+}
+
+/* =========================
+   CONSULTAS SQL
+========================= */
+async function cargarConsulta(url) {
+  const encabezado = document.getElementById("encabezadoConsulta");
+  const cuerpo = document.getElementById("cuerpoConsulta");
+  const mensaje = document.getElementById("mensajeConsulta");
+
+  try {
+    const respuesta = await fetch(url);
+    const datos = await respuesta.json();
+
+    encabezado.innerHTML = "";
+    cuerpo.innerHTML = "";
+
+    if (!respuesta.ok) {
+      mensaje.textContent = datos.error || "Error al cargar la consulta";
+      return;
+    }
+
+    if (!datos || datos.length === 0) {
+      mensaje.textContent = "La consulta no devolvió resultados";
+      return;
+    }
+
+    mensaje.textContent = "Consulta cargada correctamente";
+
+    const columnas = Object.keys(datos[0]);
+    const filaEncabezado = document.createElement("tr");
+
+    columnas.forEach((columna) => {
+      const th = document.createElement("th");
+      th.textContent = columna;
+      filaEncabezado.appendChild(th);
+    });
+
+    encabezado.appendChild(filaEncabezado);
+
+    datos.forEach((fila) => {
+      const tr = document.createElement("tr");
+
+      columnas.forEach((columna) => {
+        const td = document.createElement("td");
+        td.textContent = fila[columna];
+        tr.appendChild(td);
+      });
+
+      cuerpo.appendChild(tr);
+    });
+  } catch (error) {
+    console.error(error);
+    const mensaje = document.getElementById("mensajeConsulta");
+    if (mensaje) mensaje.textContent = "Error al cargar la consulta";
+  }
+}
+
+cargarClientes();
+cargarProductos();
