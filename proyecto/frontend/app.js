@@ -10,6 +10,7 @@ const tablaClientes = document.getElementById("tablaClientes");
 const mensajeCliente = document.getElementById("mensajeCliente");
 const btnGuardarCliente = document.getElementById("btnGuardarCliente");
 const btnCancelarCliente = document.getElementById("btnCancelarCliente");
+const btnExportarCSV = document.getElementById("btnExportarCSV");
 
 const inputCustNum = document.getElementById("cust_num");
 const inputCompany = document.getElementById("company");
@@ -353,6 +354,18 @@ async function cargarReporteOrdenesPorCliente() {
 
 if (btnCargarReporte) {
   btnCargarReporte.addEventListener("click", cargarReporteOrdenesPorCliente);
+}
+
+if (btnExportarCSV) {
+  btnExportarCSV.addEventListener("click", () => {
+    window.open("http://localhost:3000/reports/orders-by-customer/csv", "_blank");
+  });
+}
+
+if (btnExportarCSV) {
+  btnExportarCSV.addEventListener("click", () => {
+    window.open("http://localhost:3000/reports/orders-by-customer/csv", "_blank");
+  });
 }
 
 /* =========================
