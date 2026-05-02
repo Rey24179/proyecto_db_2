@@ -7,113 +7,127 @@
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
-  <h1>Gestión de Clientes</h1>
+  <div class="container">
+    <h1 class="page-title">Sistema de Gestión</h1>
+    <p class="page-subtitle">Administración de clientes, productos, reportes y órdenes</p>
 
-  <form id="formCliente">
-    <input type="number" id="cust_num" placeholder="ID Cliente" required />
-    <input type="text" id="company" placeholder="Empresa" required />
-    <input type="number" id="cust_rep" placeholder="ID Representante" required />
-    <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
-    <button type="submit" id="btnGuardarCliente">Guardar</button>
-    <button type="button" id="btnCancelarCliente" style="display: none;">Cancelar</button>
-  </form>
+    <section class="card">
+      <h2>Clientes</h2>
 
-  <p id="mensajeCliente"></p>
+      <form id="formCliente">
+        <input type="number" id="cust_num" placeholder="ID Cliente" required />
+        <input type="text" id="company" placeholder="Empresa" required />
+        <input type="number" id="cust_rep" placeholder="ID Representante" required />
+        <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
+        <button type="submit" id="btnGuardarCliente">Guardar</button>
+        <button type="button" id="btnCancelarCliente" class="secondary" style="display: none;">Cancelar</button>
+      </form>
 
-  <table>
-    <thead>
-      <tr>
-        <th>ID</th>
-        <th>Empresa</th>
-        <th>Representante</th>
-        <th>Límite de crédito</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tablaClientes"></tbody>
-  </table>
+      <p id="mensajeCliente" class="message"></p>
 
-  <hr />
+      <table>
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Empresa</th>
+            <th>Representante</th>
+            <th>Límite de crédito</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaClientes"></tbody>
+      </table>
+    </section>
 
-  <h1>Gestión de Productos</h1>
+    <section class="card">
+      <h2>Productos</h2>
 
-  <form id="formProducto">
-    <input type="text" id="mfr_id" placeholder="Fabricante" maxlength="3" required />
-    <input type="text" id="product_id" placeholder="ID Producto" maxlength="5" required />
-    <input type="text" id="description" placeholder="Descripción" required />
-    <input type="number" step="0.01" id="price" placeholder="Precio" required />
-    <input type="number" id="qty_on_hand" placeholder="Cantidad en stock" required />
-    <button type="submit" id="btnGuardarProducto">Guardar</button>
-    <button type="button" id="btnCancelarProducto" style="display: none;">Cancelar</button>
-  </form>
+      <form id="formProducto">
+        <input type="text" id="mfr_id" placeholder="Fabricante" maxlength="3" required />
+        <input type="text" id="product_id" placeholder="ID Producto" maxlength="5" required />
+        <input type="text" id="description" placeholder="Descripción" required />
+        <input type="number" step="0.01" id="price" placeholder="Precio" required />
+        <input type="number" id="qty_on_hand" placeholder="Cantidad en stock" required />
+        <button type="submit" id="btnGuardarProducto">Guardar</button>
+        <button type="button" id="btnCancelarProducto" class="secondary" style="display: none;">Cancelar</button>
+      </form>
 
-  <p id="mensajeProducto"></p>
+      <p id="mensajeProducto" class="message"></p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Fabricante</th>
-        <th>ID Producto</th>
-        <th>Descripción</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Acciones</th>
-      </tr>
-    </thead>
-    <tbody id="tablaProductos"></tbody>
-  </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Fabricante</th>
+            <th>ID Producto</th>
+            <th>Descripción</th>
+            <th>Precio</th>
+            <th>Stock</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tablaProductos"></tbody>
+      </table>
+    </section>
 
-  <hr />
+    <section class="card">
+      <h2>Reporte: Órdenes por Cliente</h2>
 
-  <h1>Reporte: Órdenes por Cliente</h1>
-  <button id="btnCargarReporte">Cargar reporte</button>
-  <button id="btnExportarCSV">Exportar CSV</button>
+      <div class="actions">
+        <button id="btnCargarReporte">Cargar reporte</button>
+        <button id="btnExportarCSV">Exportar CSV</button>
+      </div>
 
-  <p id="mensajeReporte"></p>
+      <p id="mensajeReporte" class="message"></p>
 
-  <table>
-    <thead>
-      <tr>
-        <th>Empresa</th>
-        <th>Total de órdenes</th>
-        <th>Monto total</th>
-      </tr>
-    </thead>
-    <tbody id="tablaReporte"></tbody>
-  </table>
+      <table>
+        <thead>
+          <tr>
+            <th>Empresa</th>
+            <th>Total de órdenes</th>
+            <th>Monto total</th>
+          </tr>
+        </thead>
+        <tbody id="tablaReporte"></tbody>
+      </table>
+    </section>
 
-<h1>Consultas SQL</h1>
+    <section class="card">
+      <h2>Consultas SQL</h2>
 
-<button onclick="cargarConsulta('http://localhost:3000/queries/join-clientes')">JOIN Clientes</button>
-<button onclick="cargarConsulta('http://localhost:3000/queries/join-representantes')">JOIN Representantes</button>
-<button onclick="cargarConsulta('http://localhost:3000/queries/join-productos')">JOIN Productos</button>
-<button onclick="cargarConsulta('http://localhost:3000/queries/subquery-credito')">Subquery Crédito</button>
-<button onclick="cargarConsulta('http://localhost:3000/queries/subquery-representantes')">Subquery Representantes</button>
-<button onclick="cargarConsulta('http://localhost:3000/queries/cte-clientes')">CTE Clientes</button>
+      <div class="consultas-botones">
+        <button onclick="cargarConsulta('http://localhost:3000/queries/join-clientes')">JOIN Clientes</button>
+        <button onclick="cargarConsulta('http://localhost:3000/queries/join-representantes')">JOIN Representantes</button>
+        <button onclick="cargarConsulta('http://localhost:3000/queries/join-productos')">JOIN Productos</button>
+        <button onclick="cargarConsulta('http://localhost:3000/queries/subquery-credito')">Subquery Crédito</button>
+        <button onclick="cargarConsulta('http://localhost:3000/queries/subquery-representantes')">Subquery Representantes</button>
+        <button onclick="cargarConsulta('http://localhost:3000/queries/cte-clientes')">CTE Clientes</button>
+      </div>
 
-<p id="mensajeConsulta"></p>
+      <p id="mensajeConsulta" class="message"></p>
 
-<table id="tablaConsultas">
-  <thead id="encabezadoConsulta"></thead>
-  <tbody id="cuerpoConsulta"></tbody>
-</table>
+      <table id="tablaConsultas">
+        <thead id="encabezadoConsulta"></thead>
+        <tbody id="cuerpoConsulta"></tbody>
+      </table>
+    </section>
 
-<hr />
+    <section class="card">
+      <h2>Nueva Orden</h2>
 
-<h1>Registrar Orden con Transacción</h1>
+      <form id="formOrden">
+        <input type="number" id="order_num" placeholder="Número de orden" required />
+        <input type="date" id="order_date" required />
+        <input type="number" id="order_cust" placeholder="ID Cliente" required />
+        <input type="number" id="order_rep" placeholder="ID Representante" required />
+        <input type="text" id="order_mfr" placeholder="Fabricante" maxlength="3" required />
+        <input type="text" id="order_product" placeholder="ID Producto" maxlength="5" required />
+        <input type="number" id="order_qty" placeholder="Cantidad" required />
+        <button type="submit">Registrar orden</button>
+      </form>
 
-<form id="formOrden">
-  <input type="number" id="order_num" placeholder="Número de orden" required />
-  <input type="date" id="order_date" required />
-  <input type="number" id="order_cust" placeholder="ID Cliente" required />
-  <input type="number" id="order_rep" placeholder="ID Representante" required />
-  <input type="text" id="order_mfr" placeholder="Fabricante" maxlength="3" required />
-  <input type="text" id="order_product" placeholder="ID Producto" maxlength="5" required />
-  <input type="number" id="order_qty" placeholder="Cantidad" required />
-  <button type="submit">Registrar orden</button>
-</form>
-
-<p id="mensajeOrden"></p>
+      <p id="mensajeOrden" class="message"></p>
+    </section>
+  </div>
 
   <script src="app.js"></script>
 </body>
