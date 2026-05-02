@@ -330,3 +330,40 @@ async function cargarConsulta(url) {
       "Error al cargar la consulta";
   }
 }
+
+const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
+
+const btnCargarReporte = document.getElementById("btnCargarReporte");
+const tablaReporte = document.getElementById("tablaReporte");
+const mensajeReporte = document.getElementById("mensajeReporte");
+
+async function cargarReporteOrdenesPorCliente() {
+  try {
+    const respuesta = await fetch(API_REPORTE);
+    const datos = await respuesta.json();
+
+    tablaReporte.innerHTML = "";
+
+    if (!respuesta.ok) {
+      mensajeReporte.textContent = datos.error || "Error al cargar el reporte";
+      return;
+    }
+
+    datos.forEach((fila) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${fila.company}</td>
+        <td>${fila.total_orders}</td>
+        <td>${fila.total_amount}</td>
+      `;
+      tablaReporte.appendChild(tr);
+    });
+
+    mensajeReporte.textContent = "Reporte cargado correctamente";
+  } catch (error) {
+    console.error(error);
+    mensajeReporte.textContent = "Error al cargar el reporte";
+  }
+}
+
+btnCargarReporte.addEventListener("click", cargarReporteOrdenesPorCliente);
