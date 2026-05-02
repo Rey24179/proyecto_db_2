@@ -413,3 +413,53 @@ async function cargarConsulta(url) {
 
 cargarClientes();
 cargarProductos();
+
+const API_ORDERS = "http://localhost:3000/orders/transaction";
+
+const formOrden = document.getElementById("formOrden");
+const mensajeOrden = document.getElementById("mensajeOrden");
+
+if (formOrden) {
+  formOrden.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    mensajeOrden.textContent = "Intentando registrar orden...";
+
+    const nuevaOrden = {
+      order_num: parseInt(document.getElementById("order_num").value),
+      order_date: document.getElementById("order_date").value,
+      cust: parseInt(document.getElementById("order_cust").value),
+      rep: parseInt(document.getElementById("order_rep").value),
+      mfr: document.getElementById("order_mfr").value,
+      product: document.getElementById("order_product").value,
+      qty: parseInt(document.getElementById("order_qty").value),
+    };
+
+    console.log("Orden enviada:", nuevaOrden);
+
+    try {
+      const respuesta = await fetch(API_ORDERS, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(nuevaOrden),
+      });
+
+      const data = await respuesta.json();
+      console.log("Respuesta backend:", data);
+
+      if (!respuesta.ok) {
+        mensajeOrden.textContent = data.detalle || data.error || "Error al registrar la orden";
+        return;
+      }
+
+      mensajeOrden.textContent = `${data.mensaje}. Monto: ${data.amount}`;
+      formOrden.reset();
+      cargarProductos();
+    } catch (error) {
+      console.error("Error fetch orden:", error);
+      mensajeOrden.textContent = "Error al registrar la orden";
+    }
+  });
+}

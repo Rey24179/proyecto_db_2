@@ -11,8 +11,8 @@ const reporteOrdenesPorCliente = async (req, res) => {
     const resultado = await pool.query(sql);
     res.json(resultado.rows);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al generar el reporte" });
+    console.error("ERROR REPORTE:", error);
+    res.status(500).json({ error: "Error al generar el reporte", detalle: error.message });
   }
 };
 

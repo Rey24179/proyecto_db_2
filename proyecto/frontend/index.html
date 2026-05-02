@@ -96,6 +96,24 @@
   <thead id="encabezadoConsulta"></thead>
   <tbody id="cuerpoConsulta"></tbody>
 </table>
+
+<hr />
+
+<h1>Registrar Orden con Transacción</h1>
+
+<form id="formOrden">
+  <input type="number" id="order_num" placeholder="Número de orden" required />
+  <input type="date" id="order_date" required />
+  <input type="number" id="order_cust" placeholder="ID Cliente" required />
+  <input type="number" id="order_rep" placeholder="ID Representante" required />
+  <input type="text" id="order_mfr" placeholder="Fabricante" maxlength="3" required />
+  <input type="text" id="order_product" placeholder="ID Producto" maxlength="5" required />
+  <input type="number" id="order_qty" placeholder="Cantidad" required />
+  <button type="submit">Registrar orden</button>
+</form>
+
+<p id="mensajeOrden"></p>
+
   <script src="app.js"></script>
 </body>
 </html>
