@@ -34,4 +34,13 @@ proyecto/
 │   └── init.sql
 ├── .env
 ├── .env.example
-└── docker-compose.yml
+└── docker-compose.ym
+
+## .env y .env.example
+
+DB_HOST=db
+DB_PORT=5432
+DB_NAME=proyecto_db
+DB_USER=proy2
+DB_PASSWORD=secret
+PORT=3000
