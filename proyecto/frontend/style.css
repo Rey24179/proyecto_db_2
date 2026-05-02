@@ -4,8 +4,8 @@
 
 body {
   font-family: Arial, sans-serif;
-  background-color: #f5f7fb;
-  color: #1f2937;
+  background: linear-gradient(to bottom, #eef4ff, #f8fbff);
+  color: #1e3a5f;
   margin: 0;
   padding: 0;
 }
@@ -18,30 +18,32 @@ body {
 
 .page-title {
   text-align: center;
-  font-size: 32px;
-  margin-bottom: 10px;
-  color: #111827;
+  font-size: 34px;
+  margin-bottom: 8px;
+  color: #123a63;
 }
 
 .page-subtitle {
   text-align: center;
-  color: #6b7280;
+  color: #5b7ea6;
   margin-bottom: 30px;
+  font-size: 15px;
 }
 
 .card {
   background: #ffffff;
-  border-radius: 16px;
+  border-radius: 18px;
   padding: 24px;
   margin-bottom: 25px;
-  box-shadow: 0 8px 24px rgba(15, 23, 42, 0.08);
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.10);
+  border: 1px solid #dbeafe;
 }
 
 .card h2 {
   margin-top: 0;
   margin-bottom: 16px;
   font-size: 24px;
-  color: #111827;
+  color: #1d4ed8;
 }
 
 form {
@@ -53,48 +55,52 @@ form {
 
 input {
   padding: 12px 14px;
-  border: 1px solid #d1d5db;
+  border: 1px solid #bfdbfe;
   border-radius: 10px;
   font-size: 14px;
   min-width: 180px;
-  background-color: #f9fafb;
+  background-color: #f8fbff;
   outline: none;
+  color: #1e3a5f;
 }
 
 input:focus {
-  border-color: #2563eb;
+  border-color: #3b82f6;
   background-color: #ffffff;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
 button {
   padding: 11px 16px;
   border: none;
   border-radius: 10px;
-  background-color: #2563eb;
+  background: linear-gradient(to right, #2563eb, #3b82f6);
   color: white;
   font-size: 14px;
+  font-weight: 500;
   cursor: pointer;
   transition: 0.2s ease;
 }
 
 button:hover {
-  background-color: #1d4ed8;
+  transform: translateY(-1px);
+  opacity: 0.95;
 }
 
 button.secondary {
-  background-color: #6b7280;
+  background: linear-gradient(to right, #64748b, #94a3b8);
 }
 
 button.secondary:hover {
-  background-color: #4b5563;
+  opacity: 0.95;
 }
 
 button.danger {
-  background-color: #dc2626;
+  background: linear-gradient(to right, #dc2626, #ef4444);
 }
 
 button.danger:hover {
-  background-color: #b91c1c;
+  opacity: 0.95;
 }
 
 .actions {
@@ -109,6 +115,7 @@ button.danger:hover {
   border-radius: 10px;
   background-color: #eff6ff;
   color: #1d4ed8;
+  border: 1px solid #bfdbfe;
   font-size: 14px;
 }
 
@@ -121,8 +128,8 @@ table {
 }
 
 th {
-  background-color: #f3f4f6;
-  color: #374151;
+  background-color: #dbeafe;
+  color: #1e40af;
   font-weight: 600;
   text-align: left;
   padding: 14px;
@@ -131,18 +138,19 @@ th {
 
 td {
   padding: 14px;
-  border-top: 1px solid #e5e7eb;
+  border-top: 1px solid #e0ecff;
   font-size: 14px;
+  color: #1e3a5f;
 }
 
 tr:hover {
-  background-color: #f9fafb;
+  background-color: #f4f9ff;
 }
 
 hr {
   border: none;
   height: 1px;
-  background-color: #e5e7eb;
+  background-color: #dbeafe;
   margin: 30px 0;
 }
 
