@@ -7,7 +7,7 @@ services:
       - .env
     environment:
       POSTGRES_DB: proyecto_db
-      POSTGRES_USER: proy2
+      POSTGRES_USER: proy3
       POSTGRES_PASSWORD: secret
     ports:
       - "5432:5432"
