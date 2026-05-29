@@ -7,6 +7,7 @@ const productsRoutes = require("./routes/products.routes");
 const reportsRoutes = require("./routes/reports.routes");
 const queriesRoutes = require("./routes/queries.routes");
 const ordersRoutes = require("./routes/orders.routes");
+const authRoutes = require("./routes/auth.routes");
 
 const app = express();
 
@@ -18,6 +19,8 @@ app.use("/products", productsRoutes);
 app.use("/reports", reportsRoutes);
 app.use("/queries", queriesRoutes);
 app.use("/orders", ordersRoutes);
+
+app.use("/auth", authRoutes);
 
 app.get("/", (req, res) => {
   res.json({ mensaje: "API funcionando correctamente" });
