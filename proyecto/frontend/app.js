@@ -1,6 +1,7 @@
 const API_CLIENTES = "http://localhost:3000/customers";
 const API_PRODUCTOS = "http://localhost:3000/products";
 const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
+const API_ORDERS = "http://localhost:3000/orders/transaction";
 
 /* =========================
    CLIENTES
@@ -10,7 +11,6 @@ const tablaClientes = document.getElementById("tablaClientes");
 const mensajeCliente = document.getElementById("mensajeCliente");
 const btnGuardarCliente = document.getElementById("btnGuardarCliente");
 const btnCancelarCliente = document.getElementById("btnCancelarCliente");
-const btnExportarCSV = document.getElementById("btnExportarCSV");
 
 const inputCustNum = document.getElementById("cust_num");
 const inputCompany = document.getElementById("company");
@@ -36,7 +36,7 @@ async function cargarClientes() {
         <td>${cliente.credit_limit}</td>
         <td>
           <button onclick="editarCliente(${cliente.cust_num}, '${cliente.company.replace(/'/g, "\\'")}', ${cliente.cust_rep}, ${cliente.credit_limit})">Editar</button>
-          <button onclick="eliminarCliente(${cliente.cust_num})">Eliminar</button>
+          <button class="danger" onclick="eliminarCliente(${cliente.cust_num})">Eliminar</button>
         </td>
       `;
       tablaClientes.appendChild(fila);
@@ -191,7 +191,7 @@ async function cargarProductos() {
         <td>${producto.qty_on_hand}</td>
         <td>
           <button onclick="editarProducto('${producto.mfr_id}', '${producto.product_id}', '${producto.description.replace(/'/g, "\\'")}', ${producto.price}, ${producto.qty_on_hand})">Editar</button>
-          <button onclick="eliminarProducto('${producto.mfr_id}', '${producto.product_id}')">Eliminar</button>
+          <button class="danger" onclick="eliminarProducto('${producto.mfr_id}', '${producto.product_id}')">Eliminar</button>
         </td>
       `;
       tablaProductos.appendChild(fila);
@@ -320,6 +320,7 @@ btnCancelarProducto.addEventListener("click", () => {
    REPORTE
 ========================= */
 const btnCargarReporte = document.getElementById("btnCargarReporte");
+const btnExportarCSV = document.getElementById("btnExportarCSV");
 const tablaReporte = document.getElementById("tablaReporte");
 const mensajeReporte = document.getElementById("mensajeReporte");
 
@@ -362,15 +363,27 @@ if (btnExportarCSV) {
   });
 }
 
-if (btnExportarCSV) {
-  btnExportarCSV.addEventListener("click", () => {
-    window.open("http://localhost:3000/reports/orders-by-customer/csv", "_blank");
-  });
+/* =========================
+   CONSULTAS SQL POR COMANDO
+========================= */
+const formConsulta = document.getElementById("formConsulta");
+const inputComandoConsulta = document.getElementById("comandoConsulta");
+
+function obtenerUrlConsulta(comando) {
+  const texto = comando.trim().toLowerCase();
+
+  const mapaConsultas = {
+    "join clientes": "http://localhost:3000/queries/join-clientes",
+    "join representantes": "http://localhost:3000/queries/join-representantes",
+    "join productos": "http://localhost:3000/queries/join-productos",
+    "subquery credito": "http://localhost:3000/queries/subquery-credito",
+    "subquery representantes": "http://localhost:3000/queries/subquery-representantes",
+    "cte clientes": "http://localhost:3000/queries/cte-clientes"
+  };
+
+  return mapaConsultas[texto] || null;
 }
 
-/* =========================
-   CONSULTAS SQL
-========================= */
 async function cargarConsulta(url) {
   const encabezado = document.getElementById("encabezadoConsulta");
   const cuerpo = document.getElementById("cuerpoConsulta");
@@ -424,11 +437,30 @@ async function cargarConsulta(url) {
   }
 }
 
-cargarClientes();
-cargarProductos();
+if (formConsulta) {
+  formConsulta.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-const API_ORDERS = "http://localhost:3000/orders/transaction";
+    const comando = inputComandoConsulta.value;
+    const url = obtenerUrlConsulta(comando);
+    const mensaje = document.getElementById("mensajeConsulta");
+    const encabezado = document.getElementById("encabezadoConsulta");
+    const cuerpo = document.getElementById("cuerpoConsulta");
 
+    if (!url) {
+      mensaje.textContent = "Comando no reconocido";
+      encabezado.innerHTML = "";
+      cuerpo.innerHTML = "";
+      return;
+    }
+
+    await cargarConsulta(url);
+  });
+}
+
+/* =========================
+   ORDENES CON TRANSACCION
+========================= */
 const formOrden = document.getElementById("formOrden");
 const mensajeOrden = document.getElementById("mensajeOrden");
 
@@ -448,8 +480,6 @@ if (formOrden) {
       qty: parseInt(document.getElementById("order_qty").value),
     };
 
-    console.log("Orden enviada:", nuevaOrden);
-
     try {
       const respuesta = await fetch(API_ORDERS, {
         method: "POST",
@@ -460,7 +490,6 @@ if (formOrden) {
       });
 
       const data = await respuesta.json();
-      console.log("Respuesta backend:", data);
 
       if (!respuesta.ok) {
         mensajeOrden.textContent = data.detalle || data.error || "Error al registrar la orden";
@@ -471,8 +500,44 @@ if (formOrden) {
       formOrden.reset();
       cargarProductos();
     } catch (error) {
-      console.error("Error fetch orden:", error);
+      console.error(error);
       mensajeOrden.textContent = "Error al registrar la orden";
     }
   });
+}
+
+cargarClientes();
+cargarProductos();
+
+/* =========================
+   NAVEGACION ENTRE SECCIONES
+========================= */
+function mostrarSeccion(idSeccion, boton) {
+  const secciones = document.querySelectorAll(".app-section");
+  const botones = document.querySelectorAll(".nav-btn");
+
+  secciones.forEach((seccion) => {
+    seccion.classList.add("hidden");
+  });
+
+  botones.forEach((btn) => {
+    btn.classList.remove("active");
+  });
+
+  const seccionActiva = document.getElementById(idSeccion);
+  if (seccionActiva) {
+    seccionActiva.classList.remove("hidden");
+  }
+
+  if (boton) {
+    boton.classList.add("active");
+  }
+}
+
+function activarDesdeTarjeta(idSeccion) {
+  const boton = Array.from(document.querySelectorAll(".nav-btn")).find(
+    (btn) => btn.getAttribute("onclick")?.includes(`'${idSeccion}'`)
+  );
+
+  mostrarSeccion(idSeccion, boton);
 }

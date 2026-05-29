@@ -12,7 +12,10 @@ const reporteOrdenesPorCliente = async (req, res) => {
     res.json(resultado.rows);
   } catch (error) {
     console.error("ERROR REPORTE:", error);
-    res.status(500).json({ error: "Error al generar el reporte", detalle: error.message });
+    res.status(500).json({
+      error: "Error al generar el reporte",
+      detalle: error.message,
+    });
   }
 };
 
@@ -42,7 +45,10 @@ const exportarReporteCSV = async (req, res) => {
     res.status(200).send(csv);
   } catch (error) {
     console.error("ERROR CSV:", error);
-    res.status(500).json({ error: "Error al exportar CSV", detalle: error.message });
+    res.status(500).json({
+      error: "Error al exportar CSV",
+      detalle: error.message,
+    });
   }
 };
 

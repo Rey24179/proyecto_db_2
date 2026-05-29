@@ -76,7 +76,6 @@ FROM customers c
 LEFT JOIN orders o ON c.cust_num = o.cust
 GROUP BY c.company;
 
-
 CREATE INDEX idx_salesrep_rep_office
 ON salesRep(rep_office);
 
