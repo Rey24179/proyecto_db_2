@@ -541,3 +541,90 @@ function activarDesdeTarjeta(idSeccion) {
 
   mostrarSeccion(idSeccion, boton);
 }
+
+/* =========================
+   LOGIN / LOGOUT
+========================= */
+const API_LOGIN = "http://localhost:3000/auth/login";
+const API_PROFILE = "http://localhost:3000/auth/profile";
+
+const formLogin = document.getElementById("formLogin");
+const btnLogout = document.getElementById("btnLogout");
+const mensajeLogin = document.getElementById("mensajeLogin");
+const estadoSesion = document.getElementById("estadoSesion");
+
+async function verificarSesion() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    if (estadoSesion) estadoSesion.textContent = "No has iniciado sesión";
+    return;
+  }
+
+  try {
+    const respuesta = await fetch(API_PROFILE, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await respuesta.json();
+
+    if (!respuesta.ok) {
+      if (estadoSesion) estadoSesion.textContent = "Sesión inválida o expirada";
+      localStorage.removeItem("token");
+      return;
+    }
+
+    if (estadoSesion) {
+      estadoSesion.textContent = `Sesión activa: ${data.user.username} (${data.user.role_name})`;
+    }
+  } catch (error) {
+    console.error(error);
+    if (estadoSesion) estadoSesion.textContent = "Error al verificar sesión";
+  }
+}
+
+if (formLogin) {
+  formLogin.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
+    const username = document.getElementById("login_username").value;
+    const password = document.getElementById("login_password").value;
+
+    try {
+      const respuesta = await fetch(API_LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ username, password }),
+      });
+
+      const data = await respuesta.json();
+
+      if (!respuesta.ok) {
+        if (mensajeLogin) mensajeLogin.textContent = data.error || "Error al iniciar sesión";
+        return;
+      }
+
+      localStorage.setItem("token", data.token);
+      if (mensajeLogin) mensajeLogin.textContent = "Inicio de sesión exitoso";
+      formLogin.reset();
+      verificarSesion();
+    } catch (error) {
+      console.error(error);
+      if (mensajeLogin) mensajeLogin.textContent = "Error al iniciar sesión";
+    }
+  });
+}
+
+if (btnLogout) {
+  btnLogout.addEventListener("click", () => {
+    localStorage.removeItem("token");
+    if (mensajeLogin) mensajeLogin.textContent = "Sesión cerrada correctamente";
+    if (estadoSesion) estadoSesion.textContent = "No has iniciado sesión";
+  });
+}
+
+verificarSesion();

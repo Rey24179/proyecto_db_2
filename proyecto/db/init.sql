@@ -67,6 +67,16 @@ CREATE TABLE orders (
         FOREIGN KEY (mfr, product) REFERENCES products(mfr_id, product_id)
 );
 
+DROP TABLE IF EXISTS users CASCADE;
+
+CREATE TABLE users (
+    id SERIAL PRIMARY KEY,
+    username VARCHAR(50) NOT NULL UNIQUE,
+    password VARCHAR(100) NOT NULL,
+    role_name VARCHAR(30) NOT NULL
+);
+
+
 CREATE OR REPLACE VIEW vw_orders_by_customer AS
 SELECT 
     c.company,
@@ -237,3 +247,10 @@ INSERT INTO orders (order_num, order_date, cust, rep, mfr, product, qty, amount)
 (4023,'2026-01-27',3023,221,'FEA','00117',3,1845.00),
 (4024,'2026-01-28',3024,222,'QSA','K47D4',6,1260.00),
 (4025,'2026-01-29',3025,223,'TEC','80013',8,3120.00);
+
+INSERT INTO users (username, password, role_name) VALUES
+('admin1', 'admin123', 'admin_role'),
+('sales1', 'sales123', 'sales_role'),
+('inventory1', 'inventory123', 'inventory_role'),
+('report1', 'report123', 'report_role'),
+('readonly1', 'readonly123', 'readonly_role');
