@@ -1,10 +1,26 @@
 const express = require("express");
 const router = express.Router();
 
-const { login, profile } = require("../controllers/auth.controller");
-const verificarToken = require("../middleware/auth.middleware");
+const {
+  obtenerOrdenes,
+  crearOrdenConTransaccion,
+} = require("../controllers/orders.controller");
 
-router.post("/login", login);
-router.get("/profile", verificarToken, profile);
+const verificarToken = require("../middleware/auth.middleware");
+const permitirRoles = require("../middleware/role.middleware");
+
+router.get(
+  "/",
+  verificarToken,
+  permitirRoles("admin_role", "sales_role", "readonly_role", "report_role"),
+  obtenerOrdenes
+);
+
+router.post(
+  "/transaction",
+  verificarToken,
+  permitirRoles("admin_role", "sales_role"),
+  crearOrdenConTransaccion
+);
 
 module.exports = router;

@@ -1,5 +1,5 @@
-const pool = require("../db");
 const jwt = require("jsonwebtoken");
+const User = require("../models/user.model");
 require("dotenv").config();
 
 const login = async (req, res) => {
@@ -12,18 +12,15 @@ const login = async (req, res) => {
       });
     }
 
-    const resultado = await pool.query(
-      "SELECT id, username, password, role_name FROM users WHERE username = $1",
-      [username]
-    );
+    const user = await User.findOne({
+      where: { username },
+    });
 
-    if (resultado.rows.length === 0) {
+    if (!user) {
       return res.status(401).json({
         error: "Usuario no encontrado",
       });
     }
-
-    const user = resultado.rows[0];
 
     if (user.password !== password) {
       return res.status(401).json({
