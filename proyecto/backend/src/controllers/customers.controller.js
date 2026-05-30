@@ -1,13 +1,14 @@
-const pool = require("../db");
+const Customer = require("../models/customer.model");
 
 const obtenerClientes = async (req, res) => {
   try {
-    const resultado = await pool.query(
-      "SELECT cust_num, company, cust_rep, credit_limit FROM customers ORDER BY cust_num"
-    );
-    res.json(resultado.rows);
+    const clientes = await Customer.findAll({
+      order: [["cust_num", "ASC"]],
+    });
+
+    res.json(clientes);
   } catch (error) {
-    console.error(error);
+    console.error("Error al obtener clientes:", error);
     res.status(500).json({ error: "Error al obtener clientes" });
   }
 };
@@ -16,22 +17,30 @@ const crearCliente = async (req, res) => {
   try {
     const { cust_num, company, cust_rep, credit_limit } = req.body;
 
-    if (!cust_num || !company || !cust_rep || !credit_limit) {
-      return res.status(400).json({ error: "Todos los campos son obligatorios" });
+    if (!cust_num || !company || !cust_rep || credit_limit === undefined) {
+      return res.status(400).json({
+        error: "Todos los campos son obligatorios",
+      });
     }
 
-    const sql = `
-      INSERT INTO customers (cust_num, company, cust_rep, credit_limit)
-      VALUES ($1, $2, $3, $4)
-      RETURNING *
-    `;
+    const clienteExistente = await Customer.findByPk(cust_num);
 
-    const valores = [cust_num, company, cust_rep, credit_limit];
-    const resultado = await pool.query(sql, valores);
+    if (clienteExistente) {
+      return res.status(400).json({
+        error: "Ya existe un cliente con ese ID",
+      });
+    }
 
-    res.status(201).json(resultado.rows[0]);
+    const nuevoCliente = await Customer.create({
+      cust_num,
+      company,
+      cust_rep,
+      credit_limit,
+    });
+
+    res.status(201).json(nuevoCliente);
   } catch (error) {
-    console.error(error);
+    console.error("Error al crear cliente:", error);
     res.status(500).json({ error: "Error al crear cliente" });
   }
 };
@@ -41,25 +50,23 @@ const actualizarCliente = async (req, res) => {
     const { id } = req.params;
     const { company, cust_rep, credit_limit } = req.body;
 
-    const sql = `
-      UPDATE customers
-      SET company = $1,
-          cust_rep = $2,
-          credit_limit = $3
-      WHERE cust_num = $4
-      RETURNING *
-    `;
+    const cliente = await Customer.findByPk(id);
 
-    const valores = [company, cust_rep, credit_limit, id];
-    const resultado = await pool.query(sql, valores);
-
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ error: "Cliente no encontrado" });
+    if (!cliente) {
+      return res.status(404).json({
+        error: "Cliente no encontrado",
+      });
     }
 
-    res.json(resultado.rows[0]);
+    await cliente.update({
+      company,
+      cust_rep,
+      credit_limit,
+    });
+
+    res.json(cliente);
   } catch (error) {
-    console.error(error);
+    console.error("Error al actualizar cliente:", error);
     res.status(500).json({ error: "Error al actualizar cliente" });
   }
 };
@@ -68,18 +75,21 @@ const eliminarCliente = async (req, res) => {
   try {
     const { id } = req.params;
 
-    const resultado = await pool.query(
-      "DELETE FROM customers WHERE cust_num = $1 RETURNING *",
-      [id]
-    );
+    const cliente = await Customer.findByPk(id);
 
-    if (resultado.rows.length === 0) {
-      return res.status(404).json({ error: "Cliente no encontrado" });
+    if (!cliente) {
+      return res.status(404).json({
+        error: "Cliente no encontrado",
+      });
     }
 
-    res.json({ mensaje: "Cliente eliminado correctamente" });
+    await cliente.destroy();
+
+    res.json({
+      mensaje: "Cliente eliminado correctamente",
+    });
   } catch (error) {
-    console.error(error);
+    console.error("Error al eliminar cliente:", error);
     res.status(500).json({ error: "Error al eliminar cliente" });
   }
 };

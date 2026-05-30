@@ -7,6 +7,7 @@ const Customer = sequelize.define(
     cust_num: {
       type: DataTypes.INTEGER,
       primaryKey: true,
+      allowNull: false,
     },
     company: {
       type: DataTypes.STRING(100),
