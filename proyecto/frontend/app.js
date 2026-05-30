@@ -633,6 +633,113 @@ function ocultarSistema() {
   if (sistemaApp) sistemaApp.style.display = "none";
 }
 
+function ocultarBotonesAccion(selectorTabla) {
+  const tabla = document.querySelector(selectorTabla);
+  if (!tabla) return;
+
+  const botones = tabla.querySelectorAll("button");
+  botones.forEach((btn) => {
+    btn.style.display = "none";
+  });
+}
+
+function aplicarPermisosFrontend(roleName) {
+  const navClientes = document.querySelector('button[onclick*="clientes"]');
+  const navProductos = document.querySelector('button[onclick*="productos"]');
+  const navReportes = document.querySelector('button[onclick*="reportes"]');
+  const navConsultas = document.querySelector('button[onclick*="consultas"]');
+  const navOrdenes = document.querySelector('button[onclick*="ordenes"]');
+
+  const seccionClientes = document.getElementById("clientes");
+  const seccionProductos = document.getElementById("productos");
+  const seccionReportes = document.getElementById("reportes");
+  const seccionConsultas = document.getElementById("consultas");
+  const seccionOrdenes = document.getElementById("ordenes");
+
+  const formCliente = document.getElementById("formCliente");
+  const formProducto = document.getElementById("formProducto");
+  const formOrden = document.getElementById("formOrden");
+  const btnExportarCSV = document.getElementById("btnExportarCSV");
+
+  const ocultar = (elemento) => {
+    if (elemento) elemento.style.display = "none";
+  };
+
+  const mostrar = (elemento, tipo = "block") => {
+    if (elemento) elemento.style.display = tipo;
+  };
+
+  // primero mostramos todo
+  [navClientes, navProductos, navReportes, navConsultas, navOrdenes].forEach((el) => mostrar(el, "inline-block"));
+  [seccionClientes, seccionProductos, seccionReportes, seccionConsultas, seccionOrdenes].forEach((el) => mostrar(el, "block"));
+  mostrar(formCliente, "flex");
+  mostrar(formProducto, "flex");
+  mostrar(formOrden, "flex");
+  mostrar(btnExportarCSV, "inline-block");
+
+  // admin: todo
+  if (roleName === "admin_role") {
+    return;
+  }
+
+  // sales: clientes + órdenes + ver productos
+  if (roleName === "sales_role") {
+    ocultar(navReportes);
+    ocultar(navConsultas);
+
+    ocultar(seccionReportes);
+    ocultar(seccionConsultas);
+
+    ocultar(formProducto);
+    ocultarBotonesAccion("#tablaProductos");
+    return;
+  }
+
+  // inventory: productos solamente
+  if (roleName === "inventory_role") {
+    ocultar(navClientes);
+    ocultar(navReportes);
+    ocultar(navConsultas);
+    ocultar(navOrdenes);
+
+    ocultar(seccionClientes);
+    ocultar(seccionReportes);
+    ocultar(seccionConsultas);
+    ocultar(seccionOrdenes);
+
+    return;
+  }
+
+  // report: reportes + consultas
+  if (roleName === "report_role") {
+    ocultar(navClientes);
+    ocultar(navProductos);
+    ocultar(navOrdenes);
+
+    ocultar(seccionClientes);
+    ocultar(seccionProductos);
+    ocultar(seccionOrdenes);
+
+    ocultar(btnExportarCSV); // opcional si quieres solo admin/report con ruta backend
+    return;
+  }
+
+  // readonly: solo lectura
+  if (roleName === "readonly_role") {
+    ocultar(formCliente);
+    ocultar(formProducto);
+    ocultar(formOrden);
+    ocultar(btnExportarCSV);
+
+    ocultar(navConsultas);
+    ocultar(seccionConsultas);
+
+    ocultarBotonesAccion("#tablaClientes");
+    ocultarBotonesAccion("#tablaProductos");
+    return;
+  }
+}
+
 async function verificarSesion() {
   const token = obtenerToken();
 
