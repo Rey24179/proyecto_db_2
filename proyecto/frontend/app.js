@@ -1,9 +1,32 @@
-const API_CLIENTES = "http://localhost:3000/customers";
-const API_PRODUCTOS = "http://localhost:3000/products";
-const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
-const API_ORDERS = "http://localhost:3000/orders/transaction";
-const API_LOGIN = "http://localhost:3000/auth/login";
-const API_PROFILE = "http://localhost:3000/auth/profile";
+const API_BASE = "http://localhost:3000";
+const API_CLIENTES = `${API_BASE}/customers`;
+const API_PRODUCTOS = `${API_BASE}/products`;
+const API_REPORTE = `${API_BASE}/reports/orders-by-customer`;
+const API_ORDERS = `${API_BASE}/orders/transaction`;
+const API_LOGIN = `${API_BASE}/auth/login`;
+const API_PROFILE = `${API_BASE}/auth/profile`;
+
+/* =========================
+   HELPERS AUTH
+========================= */
+function obtenerToken() {
+  return localStorage.getItem("token");
+}
+
+function obtenerHeadersAuth() {
+  const token = obtenerToken();
+  return {
+    "Content-Type": "application/json",
+    Authorization: `Bearer ${token}`,
+  };
+}
+
+function obtenerHeadersSoloAuth() {
+  const token = obtenerToken();
+  return {
+    Authorization: `Bearer ${token}`,
+  };
+}
 
 /* =========================
    CLIENTES
@@ -24,10 +47,18 @@ let idClienteEditando = null;
 
 async function cargarClientes() {
   try {
-    const respuesta = await fetch(API_CLIENTES);
+    const respuesta = await fetch(API_CLIENTES, {
+      headers: obtenerHeadersSoloAuth(),
+    });
+
     const clientes = await respuesta.json();
 
     tablaClientes.innerHTML = "";
+
+    if (!respuesta.ok) {
+      mensajeCliente.textContent = clientes.error || "Error al cargar clientes";
+      return;
+    }
 
     clientes.forEach((cliente) => {
       const fila = document.createElement("tr");
@@ -66,7 +97,7 @@ if (formCliente) {
       if (editandoCliente) {
         respuesta = await fetch(`${API_CLIENTES}/${idClienteEditando}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: obtenerHeadersAuth(),
           body: JSON.stringify({
             company: cliente.company,
             cust_rep: cliente.cust_rep,
@@ -76,7 +107,7 @@ if (formCliente) {
       } else {
         respuesta = await fetch(API_CLIENTES, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: obtenerHeadersAuth(),
           body: JSON.stringify(cliente),
         });
       }
@@ -123,6 +154,7 @@ async function eliminarCliente(id) {
   try {
     const respuesta = await fetch(`${API_CLIENTES}/${id}`, {
       method: "DELETE",
+      headers: obtenerHeadersSoloAuth(),
     });
 
     const data = await respuesta.json();
@@ -182,10 +214,18 @@ let productEditando = null;
 
 async function cargarProductos() {
   try {
-    const respuesta = await fetch(API_PRODUCTOS);
+    const respuesta = await fetch(API_PRODUCTOS, {
+      headers: obtenerHeadersSoloAuth(),
+    });
+
     const productos = await respuesta.json();
 
     tablaProductos.innerHTML = "";
+
+    if (!respuesta.ok) {
+      mensajeProducto.textContent = productos.error || "Error al cargar productos";
+      return;
+    }
 
     productos.forEach((producto) => {
       const fila = document.createElement("tr");
@@ -226,7 +266,7 @@ if (formProducto) {
       if (editandoProducto) {
         respuesta = await fetch(`${API_PRODUCTOS}/${mfrEditando}/${productEditando}`, {
           method: "PUT",
-          headers: { "Content-Type": "application/json" },
+          headers: obtenerHeadersAuth(),
           body: JSON.stringify({
             description: producto.description,
             price: producto.price,
@@ -236,7 +276,7 @@ if (formProducto) {
       } else {
         respuesta = await fetch(API_PRODUCTOS, {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: obtenerHeadersAuth(),
           body: JSON.stringify(producto),
         });
       }
@@ -286,6 +326,7 @@ async function eliminarProducto(mfr_id, product_id) {
   try {
     const respuesta = await fetch(`${API_PRODUCTOS}/${mfr_id}/${product_id}`, {
       method: "DELETE",
+      headers: obtenerHeadersSoloAuth(),
     });
 
     const data = await respuesta.json();
@@ -336,7 +377,10 @@ const mensajeReporte = document.getElementById("mensajeReporte");
 
 async function cargarReporteOrdenesPorCliente() {
   try {
-    const respuesta = await fetch(API_REPORTE);
+    const respuesta = await fetch(API_REPORTE, {
+      headers: obtenerHeadersSoloAuth(),
+    });
+
     const datos = await respuesta.json();
 
     tablaReporte.innerHTML = "";
@@ -368,8 +412,31 @@ if (btnCargarReporte) {
 }
 
 if (btnExportarCSV) {
-  btnExportarCSV.addEventListener("click", () => {
-    window.open("http://localhost:3000/reports/orders-by-customer/csv", "_blank");
+  btnExportarCSV.addEventListener("click", async () => {
+    try {
+      const respuesta = await fetch(`${API_REPORTE}/csv`, {
+        headers: obtenerHeadersSoloAuth(),
+      });
+
+      if (!respuesta.ok) {
+        const data = await respuesta.json();
+        mensajeReporte.textContent = data.error || "Error al exportar CSV";
+        return;
+      }
+
+      const blob = await respuesta.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = "reporte_ordenes_por_cliente.csv";
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error(error);
+      mensajeReporte.textContent = "Error al exportar CSV";
+    }
   });
 }
 
@@ -383,12 +450,12 @@ function obtenerUrlConsulta(comando) {
   const texto = comando.trim().toLowerCase();
 
   const mapaConsultas = {
-    "join clientes": "http://localhost:3000/queries/join-clientes",
-    "join representantes": "http://localhost:3000/queries/join-representantes",
-    "join productos": "http://localhost:3000/queries/join-productos",
-    "subquery credito": "http://localhost:3000/queries/subquery-credito",
-    "subquery representantes": "http://localhost:3000/queries/subquery-representantes",
-    "cte clientes": "http://localhost:3000/queries/cte-clientes"
+    "join clientes": `${API_BASE}/queries/join-clientes`,
+    "join representantes": `${API_BASE}/queries/join-representantes`,
+    "join productos": `${API_BASE}/queries/join-productos`,
+    "subquery credito": `${API_BASE}/queries/subquery-credito`,
+    "subquery representantes": `${API_BASE}/queries/subquery-representantes`,
+    "cte clientes": `${API_BASE}/queries/cte-clientes`,
   };
 
   return mapaConsultas[texto] || null;
@@ -400,7 +467,10 @@ async function cargarConsulta(url) {
   const mensaje = document.getElementById("mensajeConsulta");
 
   try {
-    const respuesta = await fetch(url);
+    const respuesta = await fetch(url, {
+      headers: obtenerHeadersSoloAuth(),
+    });
+
     const datos = await respuesta.json();
 
     encabezado.innerHTML = "";
@@ -492,9 +562,7 @@ if (formOrden) {
     try {
       const respuesta = await fetch(API_ORDERS, {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+        headers: obtenerHeadersAuth(),
         body: JSON.stringify(nuevaOrden),
       });
 
@@ -566,7 +634,7 @@ function ocultarSistema() {
 }
 
 async function verificarSesion() {
-  const token = localStorage.getItem("token");
+  const token = obtenerToken();
 
   if (!token) {
     if (estadoSesion) estadoSesion.textContent = "No has iniciado sesión";
@@ -576,9 +644,7 @@ async function verificarSesion() {
 
   try {
     const respuesta = await fetch(API_PROFILE, {
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
+      headers: obtenerHeadersSoloAuth(),
     });
 
     const data = await respuesta.json();
@@ -630,6 +696,8 @@ if (formLogin) {
       formLogin.reset();
       mostrarSistema();
       verificarSesion();
+      cargarClientes();
+      cargarProductos();
     } catch (error) {
       console.error(error);
       if (mensajeLogin) mensajeLogin.textContent = "Error al iniciar sesión";
@@ -646,6 +714,4 @@ if (btnLogout) {
   });
 }
 
-cargarClientes();
-cargarProductos();
 verificarSesion();

@@ -6,7 +6,21 @@ const {
   exportarReporteCSV,
 } = require("../controllers/reports.controller");
 
-router.get("/orders-by-customer", reporteOrdenesPorCliente);
-router.get("/orders-by-customer/csv", exportarReporteCSV);
+const verificarToken = require("../middleware/auth.middleware");
+const permitirRoles = require("../middleware/role.middleware");
+
+router.get(
+  "/orders-by-customer",
+  verificarToken,
+  permitirRoles("admin_role", "report_role", "readonly_role"),
+  reporteOrdenesPorCliente
+);
+
+router.get(
+  "/orders-by-customer/csv",
+  verificarToken,
+  permitirRoles("admin_role", "report_role"),
+  exportarReporteCSV
+);
 
 module.exports = router;

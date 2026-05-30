@@ -7,7 +7,9 @@ const login = async (req, res) => {
     const { username, password } = req.body;
 
     if (!username || !password) {
-      return res.status(400).json({ error: "Usuario y contraseña son obligatorios" });
+      return res.status(400).json({
+        error: "Usuario y contraseña son obligatorios",
+      });
     }
 
     const resultado = await pool.query(
@@ -16,13 +18,17 @@ const login = async (req, res) => {
     );
 
     if (resultado.rows.length === 0) {
-      return res.status(401).json({ error: "Usuario no encontrado" });
+      return res.status(401).json({
+        error: "Usuario no encontrado",
+      });
     }
 
     const user = resultado.rows[0];
 
     if (user.password !== password) {
-      return res.status(401).json({ error: "Contraseña incorrecta" });
+      return res.status(401).json({
+        error: "Contraseña incorrecta",
+      });
     }
 
     const token = jwt.sign(
@@ -45,8 +51,10 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al iniciar sesión" });
+    console.error("Error en login:", error);
+    res.status(500).json({
+      error: "Error al iniciar sesión",
+    });
   }
 };
 
@@ -57,8 +65,10 @@ const profile = async (req, res) => {
       user: req.user,
     });
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error al obtener perfil" });
+    console.error("Error en profile:", error);
+    res.status(500).json({
+      error: "Error al obtener perfil",
+    });
   }
 };
 
