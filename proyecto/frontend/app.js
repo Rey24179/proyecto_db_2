@@ -6,9 +6,7 @@ const API_ORDERS = `${API_BASE}/orders/transaction`;
 const API_LOGIN = `${API_BASE}/auth/login`;
 const API_PROFILE = `${API_BASE}/auth/profile`;
 
-/* =========================
-   HELPERS AUTH
-========================= */
+/* HELPERS AUTH */
 function obtenerToken() {
   return localStorage.getItem("token");
 }
@@ -28,9 +26,7 @@ function obtenerHeadersSoloAuth() {
   };
 }
 
-/* =========================
-   CLIENTES
-========================= */
+/* CLIENTES */
 const formCliente = document.getElementById("formCliente");
 const tablaClientes = document.getElementById("tablaClientes");
 const mensajeCliente = document.getElementById("mensajeCliente");
@@ -52,7 +48,6 @@ async function cargarClientes() {
     });
 
     const clientes = await respuesta.json();
-
     tablaClientes.innerHTML = "";
 
     if (!respuesta.ok) {
@@ -193,9 +188,7 @@ if (btnCancelarCliente) {
   });
 }
 
-/* =========================
-   PRODUCTOS
-========================= */
+/* PRODUCTOS */
 const formProducto = document.getElementById("formProducto");
 const tablaProductos = document.getElementById("tablaProductos");
 const mensajeProducto = document.getElementById("mensajeProducto");
@@ -219,7 +212,6 @@ async function cargarProductos() {
     });
 
     const productos = await respuesta.json();
-
     tablaProductos.innerHTML = "";
 
     if (!respuesta.ok) {
@@ -367,9 +359,7 @@ if (btnCancelarProducto) {
   });
 }
 
-/* =========================
-   REPORTE
-========================= */
+/* REPORTE */
 const btnCargarReporte = document.getElementById("btnCargarReporte");
 const btnExportarCSV = document.getElementById("btnExportarCSV");
 const tablaReporte = document.getElementById("tablaReporte");
@@ -382,7 +372,6 @@ async function cargarReporteOrdenesPorCliente() {
     });
 
     const datos = await respuesta.json();
-
     tablaReporte.innerHTML = "";
 
     if (!respuesta.ok) {
@@ -440,9 +429,7 @@ if (btnExportarCSV) {
   });
 }
 
-/* =========================
-   CONSULTAS SQL POR COMANDO
-========================= */
+/* CONSULTAS */
 const formConsulta = document.getElementById("formConsulta");
 const inputComandoConsulta = document.getElementById("comandoConsulta");
 
@@ -537,9 +524,7 @@ if (formConsulta) {
   });
 }
 
-/* =========================
-   ORDENES CON TRANSACCION
-========================= */
+/* ORDENES */
 const formOrden = document.getElementById("formOrden");
 const mensajeOrden = document.getElementById("mensajeOrden");
 
@@ -583,9 +568,7 @@ if (formOrden) {
   });
 }
 
-/* =========================
-   NAVEGACION ENTRE SECCIONES
-========================= */
+/* NAVEGACION */
 function mostrarSeccion(idSeccion, boton) {
   const secciones = document.querySelectorAll(".app-section");
   const botones = document.querySelectorAll(".nav-btn");
@@ -616,9 +599,7 @@ function activarDesdeTarjeta(idSeccion) {
   mostrarSeccion(idSeccion, boton);
 }
 
-/* =========================
-   LOGIN / LOGOUT
-========================= */
+/* LOGIN / LOGOUT */
 const formLogin = document.getElementById("formLogin");
 const btnLogout = document.getElementById("btnLogout");
 const mensajeLogin = document.getElementById("mensajeLogin");
@@ -636,7 +617,6 @@ function ocultarSistema() {
 function ocultarBotonesAccion(selectorTabla) {
   const tabla = document.querySelector(selectorTabla);
   if (!tabla) return;
-
   const botones = tabla.querySelectorAll("button");
   botones.forEach((btn) => {
     btn.style.display = "none";
@@ -656,10 +636,10 @@ function aplicarPermisosFrontend(roleName) {
   const seccionConsultas = document.getElementById("consultas");
   const seccionOrdenes = document.getElementById("ordenes");
 
-  const formCliente = document.getElementById("formCliente");
-  const formProducto = document.getElementById("formProducto");
-  const formOrden = document.getElementById("formOrden");
-  const btnExportarCSV = document.getElementById("btnExportarCSV");
+  const formClienteEl = document.getElementById("formCliente");
+  const formProductoEl = document.getElementById("formProducto");
+  const formOrdenEl = document.getElementById("formOrden");
+  const btnExportarCSVEl = document.getElementById("btnExportarCSV");
 
   const ocultar = (elemento) => {
     if (elemento) elemento.style.display = "none";
@@ -669,74 +649,56 @@ function aplicarPermisosFrontend(roleName) {
     if (elemento) elemento.style.display = tipo;
   };
 
-  // primero mostramos todo
   [navClientes, navProductos, navReportes, navConsultas, navOrdenes].forEach((el) => mostrar(el, "inline-block"));
   [seccionClientes, seccionProductos, seccionReportes, seccionConsultas, seccionOrdenes].forEach((el) => mostrar(el, "block"));
-  mostrar(formCliente, "flex");
-  mostrar(formProducto, "flex");
-  mostrar(formOrden, "flex");
-  mostrar(btnExportarCSV, "inline-block");
+  mostrar(formClienteEl, "flex");
+  mostrar(formProductoEl, "flex");
+  mostrar(formOrdenEl, "flex");
+  mostrar(btnExportarCSVEl, "inline-block");
 
-  // admin: todo
-  if (roleName === "admin_role") {
-    return;
-  }
+  if (roleName === "admin_role") return;
 
-  // sales: clientes + órdenes + ver productos
   if (roleName === "sales_role") {
     ocultar(navReportes);
     ocultar(navConsultas);
-
     ocultar(seccionReportes);
     ocultar(seccionConsultas);
-
-    ocultar(formProducto);
+    ocultar(formProductoEl);
     ocultarBotonesAccion("#tablaProductos");
     return;
   }
 
-  // inventory: productos solamente
   if (roleName === "inventory_role") {
     ocultar(navClientes);
     ocultar(navReportes);
     ocultar(navConsultas);
     ocultar(navOrdenes);
-
     ocultar(seccionClientes);
     ocultar(seccionReportes);
     ocultar(seccionConsultas);
     ocultar(seccionOrdenes);
-
     return;
   }
 
-  // report: reportes + consultas
   if (roleName === "report_role") {
     ocultar(navClientes);
     ocultar(navProductos);
     ocultar(navOrdenes);
-
     ocultar(seccionClientes);
     ocultar(seccionProductos);
     ocultar(seccionOrdenes);
-
-    ocultar(btnExportarCSV); // opcional si quieres solo admin/report con ruta backend
     return;
   }
 
-  // readonly: solo lectura
   if (roleName === "readonly_role") {
-    ocultar(formCliente);
-    ocultar(formProducto);
-    ocultar(formOrden);
-    ocultar(btnExportarCSV);
-
+    ocultar(formClienteEl);
+    ocultar(formProductoEl);
+    ocultar(formOrdenEl);
+    ocultar(btnExportarCSVEl);
     ocultar(navConsultas);
     ocultar(seccionConsultas);
-
     ocultarBotonesAccion("#tablaClientes");
     ocultarBotonesAccion("#tablaProductos");
-    return;
   }
 }
 
@@ -768,6 +730,7 @@ async function verificarSesion() {
     }
 
     mostrarSistema();
+    aplicarPermisosFrontend(data.user.role_name);
   } catch (error) {
     console.error(error);
     if (estadoSesion) estadoSesion.textContent = "Error al verificar sesión";
@@ -802,9 +765,9 @@ if (formLogin) {
       if (mensajeLogin) mensajeLogin.textContent = "Inicio de sesión exitoso";
       formLogin.reset();
       mostrarSistema();
-      verificarSesion();
       cargarClientes();
       cargarProductos();
+      verificarSesion();
     } catch (error) {
       console.error(error);
       if (mensajeLogin) mensajeLogin.textContent = "Error al iniciar sesión";
@@ -822,4 +785,3 @@ if (btnLogout) {
 }
 
 verificarSesion();
-
