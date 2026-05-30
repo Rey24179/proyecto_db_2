@@ -25,172 +25,174 @@
       <p id="estadoSesion" class="message"></p>
     </section>
 
-    <nav class="top-nav">
-      <button class="nav-btn active" onclick="mostrarSeccion('inicio', this)">Inicio</button>
-      <button class="nav-btn" onclick="mostrarSeccion('clientes', this)">Clientes</button>
-      <button class="nav-btn" onclick="mostrarSeccion('productos', this)">Productos</button>
-      <button class="nav-btn" onclick="mostrarSeccion('reportes', this)">Reportes</button>
-      <button class="nav-btn" onclick="mostrarSeccion('consultas', this)">Consultas SQL</button>
-      <button class="nav-btn" onclick="mostrarSeccion('ordenes', this)">Órdenes</button>
-    </nav>
+    <div id="sistemaApp">
+      <nav class="top-nav">
+        <button class="nav-btn active" onclick="mostrarSeccion('inicio', this)">Inicio</button>
+        <button class="nav-btn" onclick="mostrarSeccion('clientes', this)">Clientes</button>
+        <button class="nav-btn" onclick="mostrarSeccion('productos', this)">Productos</button>
+        <button class="nav-btn" onclick="mostrarSeccion('reportes', this)">Reportes</button>
+        <button class="nav-btn" onclick="mostrarSeccion('consultas', this)">Consultas SQL</button>
+        <button class="nav-btn" onclick="mostrarSeccion('ordenes', this)">Órdenes</button>
+      </nav>
 
-    <section id="inicio" class="card app-section">
-      <h2>Inicio</h2>
-      <p class="message">
-        Bienvenido al sistema. Usa el menú superior para navegar entre clientes, productos,
-        reportes, consultas SQL y registro de órdenes.
-      </p>
+      <section id="inicio" class="card app-section">
+        <h2>Inicio</h2>
+        <p class="message">
+          Bienvenido al sistema. Usa el menú superior para navegar entre clientes, productos,
+          reportes, consultas SQL y registro de órdenes.
+        </p>
 
-      <div class="dashboard-grid">
-        <div class="dashboard-card" onclick="activarDesdeTarjeta('clientes')">
-          <h3>Clientes</h3>
-          <p>Gestiona el CRUD completo de clientes.</p>
+        <div class="dashboard-grid">
+          <div class="dashboard-card" onclick="activarDesdeTarjeta('clientes')">
+            <h3>Clientes</h3>
+            <p>Gestiona el CRUD completo de clientes.</p>
+          </div>
+
+          <div class="dashboard-card" onclick="activarDesdeTarjeta('productos')">
+            <h3>Productos</h3>
+            <p>Administra productos, precios y stock.</p>
+          </div>
+
+          <div class="dashboard-card" onclick="activarDesdeTarjeta('reportes')">
+            <h3>Reportes</h3>
+            <p>Consulta el reporte de órdenes por cliente y exporta CSV.</p>
+          </div>
+
+          <div class="dashboard-card" onclick="activarDesdeTarjeta('consultas')">
+            <h3>Consultas SQL</h3>
+            <p>Busca consultas por comando y visualiza resultados en tabla.</p>
+          </div>
+
+          <div class="dashboard-card" onclick="activarDesdeTarjeta('ordenes')">
+            <h3>Órdenes</h3>
+            <p>Registra órdenes usando transacción con validaciones y rollback.</p>
+          </div>
+        </div>
+      </section>
+
+      <section id="clientes" class="card app-section hidden">
+        <h2>Clientes</h2>
+
+        <form id="formCliente">
+          <input type="number" id="cust_num" placeholder="ID Cliente" required />
+          <input type="text" id="company" placeholder="Empresa" required />
+          <input type="number" id="cust_rep" placeholder="ID Representante" required />
+          <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
+          <button type="submit" id="btnGuardarCliente">Guardar</button>
+          <button type="button" id="btnCancelarCliente" class="secondary" style="display: none;">Cancelar</button>
+        </form>
+
+        <p id="mensajeCliente" class="message"></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Empresa</th>
+              <th>Representante</th>
+              <th>Límite de crédito</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaClientes"></tbody>
+        </table>
+      </section>
+
+      <section id="productos" class="card app-section hidden">
+        <h2>Productos</h2>
+
+        <form id="formProducto">
+          <input type="text" id="mfr_id" placeholder="Fabricante" maxlength="3" required />
+          <input type="text" id="product_id" placeholder="ID Producto" maxlength="5" required />
+          <input type="text" id="description" placeholder="Descripción" required />
+          <input type="number" step="0.01" id="price" placeholder="Precio" required />
+          <input type="number" id="qty_on_hand" placeholder="Cantidad en stock" required />
+          <button type="submit" id="btnGuardarProducto">Guardar</button>
+          <button type="button" id="btnCancelarProducto" class="secondary" style="display: none;">Cancelar</button>
+        </form>
+
+        <p id="mensajeProducto" class="message"></p>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Fabricante</th>
+              <th>ID Producto</th>
+              <th>Descripción</th>
+              <th>Precio</th>
+              <th>Stock</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaProductos"></tbody>
+        </table>
+      </section>
+
+      <section id="reportes" class="card app-section hidden">
+        <h2>Reporte: Órdenes por Cliente</h2>
+
+        <div class="actions">
+          <button id="btnCargarReporte">Cargar reporte</button>
+          <button id="btnExportarCSV">Exportar CSV</button>
         </div>
 
-        <div class="dashboard-card" onclick="activarDesdeTarjeta('productos')">
-          <h3>Productos</h3>
-          <p>Administra productos, precios y stock.</p>
-        </div>
+        <p id="mensajeReporte" class="message"></p>
 
-        <div class="dashboard-card" onclick="activarDesdeTarjeta('reportes')">
-          <h3>Reportes</h3>
-          <p>Consulta el reporte de órdenes por cliente y exporta CSV.</p>
-        </div>
+        <table>
+          <thead>
+            <tr>
+              <th>Empresa</th>
+              <th>Total de órdenes</th>
+              <th>Monto total</th>
+            </tr>
+          </thead>
+          <tbody id="tablaReporte"></tbody>
+        </table>
+      </section>
 
-        <div class="dashboard-card" onclick="activarDesdeTarjeta('consultas')">
-          <h3>Consultas SQL</h3>
-          <p>Busca consultas por comando y visualiza resultados en tabla.</p>
-        </div>
+      <section id="consultas" class="card app-section hidden">
+        <h2>Consultas SQL</h2>
 
-        <div class="dashboard-card" onclick="activarDesdeTarjeta('ordenes')">
-          <h3>Órdenes</h3>
-          <p>Registra órdenes usando transacción con validaciones y rollback.</p>
-        </div>
-      </div>
-    </section>
+        <form id="formConsulta">
+          <input
+            type="text"
+            id="comandoConsulta"
+            placeholder="Escribe un comando, por ejemplo: join clientes"
+            required
+          />
+          <button type="submit">Buscar</button>
+        </form>
 
-    <section id="clientes" class="card app-section hidden">
-      <h2>Clientes</h2>
+        <p class="message">
+          Comandos disponibles: join clientes, join representantes, join productos,
+          subquery credito, subquery representantes, cte clientes
+        </p>
 
-      <form id="formCliente">
-        <input type="number" id="cust_num" placeholder="ID Cliente" required />
-        <input type="text" id="company" placeholder="Empresa" required />
-        <input type="number" id="cust_rep" placeholder="ID Representante" required />
-        <input type="number" step="0.01" id="credit_limit" placeholder="Límite de crédito" required />
-        <button type="submit" id="btnGuardarCliente">Guardar</button>
-        <button type="button" id="btnCancelarCliente" class="secondary" style="display: none;">Cancelar</button>
-      </form>
+        <p id="mensajeConsulta" class="message"></p>
 
-      <p id="mensajeCliente" class="message"></p>
+        <table id="tablaConsultas">
+          <thead id="encabezadoConsulta"></thead>
+          <tbody id="cuerpoConsulta"></tbody>
+        </table>
+      </section>
 
-      <table>
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Empresa</th>
-            <th>Representante</th>
-            <th>Límite de crédito</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaClientes"></tbody>
-      </table>
-    </section>
+      <section id="ordenes" class="card app-section hidden">
+        <h2>Nueva Orden</h2>
 
-    <section id="productos" class="card app-section hidden">
-      <h2>Productos</h2>
+        <form id="formOrden">
+          <input type="number" id="order_num" placeholder="Número de orden" required />
+          <input type="date" id="order_date" required />
+          <input type="number" id="order_cust" placeholder="ID Cliente" required />
+          <input type="number" id="order_rep" placeholder="ID Representante" required />
+          <input type="text" id="order_mfr" placeholder="Fabricante" maxlength="3" required />
+          <input type="text" id="order_product" placeholder="ID Producto" maxlength="5" required />
+          <input type="number" id="order_qty" placeholder="Cantidad" required />
+          <button type="submit">Registrar orden</button>
+        </form>
 
-      <form id="formProducto">
-        <input type="text" id="mfr_id" placeholder="Fabricante" maxlength="3" required />
-        <input type="text" id="product_id" placeholder="ID Producto" maxlength="5" required />
-        <input type="text" id="description" placeholder="Descripción" required />
-        <input type="number" step="0.01" id="price" placeholder="Precio" required />
-        <input type="number" id="qty_on_hand" placeholder="Cantidad en stock" required />
-        <button type="submit" id="btnGuardarProducto">Guardar</button>
-        <button type="button" id="btnCancelarProducto" class="secondary" style="display: none;">Cancelar</button>
-      </form>
-
-      <p id="mensajeProducto" class="message"></p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Fabricante</th>
-            <th>ID Producto</th>
-            <th>Descripción</th>
-            <th>Precio</th>
-            <th>Stock</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody id="tablaProductos"></tbody>
-      </table>
-    </section>
-
-    <section id="reportes" class="card app-section hidden">
-      <h2>Reporte: Órdenes por Cliente</h2>
-
-      <div class="actions">
-        <button id="btnCargarReporte">Cargar reporte</button>
-        <button id="btnExportarCSV">Exportar CSV</button>
-      </div>
-
-      <p id="mensajeReporte" class="message"></p>
-
-      <table>
-        <thead>
-          <tr>
-            <th>Empresa</th>
-            <th>Total de órdenes</th>
-            <th>Monto total</th>
-          </tr>
-        </thead>
-        <tbody id="tablaReporte"></tbody>
-      </table>
-    </section>
-
-    <section id="consultas" class="card app-section hidden">
-      <h2>Consultas SQL</h2>
-
-      <form id="formConsulta">
-        <input
-          type="text"
-          id="comandoConsulta"
-          placeholder="Escribe un comando, por ejemplo: join clientes"
-          required
-        />
-        <button type="submit">Buscar</button>
-      </form>
-
-      <p class="message">
-        Comandos disponibles: join clientes, join representantes, join productos,
-        subquery credito, subquery representantes, cte clientes
-      </p>
-
-      <p id="mensajeConsulta" class="message"></p>
-
-      <table id="tablaConsultas">
-        <thead id="encabezadoConsulta"></thead>
-        <tbody id="cuerpoConsulta"></tbody>
-      </table>
-    </section>
-
-    <section id="ordenes" class="card app-section hidden">
-      <h2>Nueva Orden</h2>
-
-      <form id="formOrden">
-        <input type="number" id="order_num" placeholder="Número de orden" required />
-        <input type="date" id="order_date" required />
-        <input type="number" id="order_cust" placeholder="ID Cliente" required />
-        <input type="number" id="order_rep" placeholder="ID Representante" required />
-        <input type="text" id="order_mfr" placeholder="Fabricante" maxlength="3" required />
-        <input type="text" id="order_product" placeholder="ID Producto" maxlength="5" required />
-        <input type="number" id="order_qty" placeholder="Cantidad" required />
-        <button type="submit">Registrar orden</button>
-      </form>
-
-      <p id="mensajeOrden" class="message"></p>
-    </section>
+        <p id="mensajeOrden" class="message"></p>
+      </section>
+    </div>
   </div>
 
   <script src="app.js"></script>

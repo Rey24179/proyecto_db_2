@@ -2,6 +2,8 @@ const API_CLIENTES = "http://localhost:3000/customers";
 const API_PRODUCTOS = "http://localhost:3000/products";
 const API_REPORTE = "http://localhost:3000/reports/orders-by-customer";
 const API_ORDERS = "http://localhost:3000/orders/transaction";
+const API_LOGIN = "http://localhost:3000/auth/login";
+const API_PROFILE = "http://localhost:3000/auth/profile";
 
 /* =========================
    CLIENTES
@@ -47,55 +49,57 @@ async function cargarClientes() {
   }
 }
 
-formCliente.addEventListener("submit", async (e) => {
-  e.preventDefault();
+if (formCliente) {
+  formCliente.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const cliente = {
-    cust_num: parseInt(inputCustNum.value),
-    company: inputCompany.value,
-    cust_rep: parseInt(inputCustRep.value),
-    credit_limit: parseFloat(inputCreditLimit.value),
-  };
+    const cliente = {
+      cust_num: parseInt(inputCustNum.value),
+      company: inputCompany.value,
+      cust_rep: parseInt(inputCustRep.value),
+      credit_limit: parseFloat(inputCreditLimit.value),
+    };
 
-  try {
-    let respuesta;
+    try {
+      let respuesta;
 
-    if (editandoCliente) {
-      respuesta = await fetch(`${API_CLIENTES}/${idClienteEditando}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          company: cliente.company,
-          cust_rep: cliente.cust_rep,
-          credit_limit: cliente.credit_limit,
-        }),
-      });
-    } else {
-      respuesta = await fetch(API_CLIENTES, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cliente),
-      });
+      if (editandoCliente) {
+        respuesta = await fetch(`${API_CLIENTES}/${idClienteEditando}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            company: cliente.company,
+            cust_rep: cliente.cust_rep,
+            credit_limit: cliente.credit_limit,
+          }),
+        });
+      } else {
+        respuesta = await fetch(API_CLIENTES, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(cliente),
+        });
+      }
+
+      const data = await respuesta.json();
+
+      if (!respuesta.ok) {
+        mensajeCliente.textContent = data.error || "Error en clientes";
+        return;
+      }
+
+      mensajeCliente.textContent = editandoCliente
+        ? "Cliente actualizado correctamente"
+        : "Cliente creado correctamente";
+
+      resetFormularioCliente();
+      cargarClientes();
+    } catch (error) {
+      console.error(error);
+      mensajeCliente.textContent = "Error al guardar cliente";
     }
-
-    const data = await respuesta.json();
-
-    if (!respuesta.ok) {
-      mensajeCliente.textContent = data.error || "Error en clientes";
-      return;
-    }
-
-    mensajeCliente.textContent = editandoCliente
-      ? "Cliente actualizado correctamente"
-      : "Cliente creado correctamente";
-
-    resetFormularioCliente();
-    cargarClientes();
-  } catch (error) {
-    console.error(error);
-    mensajeCliente.textContent = "Error al guardar cliente";
-  }
-});
+  });
+}
 
 function editarCliente(cust_num, company, cust_rep, credit_limit) {
   editandoCliente = true;
@@ -150,10 +154,12 @@ function resetFormularioCliente() {
   btnCancelarCliente.style.display = "none";
 }
 
-btnCancelarCliente.addEventListener("click", () => {
-  resetFormularioCliente();
-  mensajeCliente.textContent = "Edición de cliente cancelada";
-});
+if (btnCancelarCliente) {
+  btnCancelarCliente.addEventListener("click", () => {
+    resetFormularioCliente();
+    mensajeCliente.textContent = "Edición de cliente cancelada";
+  });
+}
 
 /* =========================
    PRODUCTOS
@@ -202,56 +208,58 @@ async function cargarProductos() {
   }
 }
 
-formProducto.addEventListener("submit", async (e) => {
-  e.preventDefault();
+if (formProducto) {
+  formProducto.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-  const producto = {
-    mfr_id: inputMfrId.value,
-    product_id: inputProductId.value,
-    description: inputDescription.value,
-    price: parseFloat(inputPrice.value),
-    qty_on_hand: parseInt(inputQtyOnHand.value),
-  };
+    const producto = {
+      mfr_id: inputMfrId.value,
+      product_id: inputProductId.value,
+      description: inputDescription.value,
+      price: parseFloat(inputPrice.value),
+      qty_on_hand: parseInt(inputQtyOnHand.value),
+    };
 
-  try {
-    let respuesta;
+    try {
+      let respuesta;
 
-    if (editandoProducto) {
-      respuesta = await fetch(`${API_PRODUCTOS}/${mfrEditando}/${productEditando}`, {
-        method: "PUT",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          description: producto.description,
-          price: producto.price,
-          qty_on_hand: producto.qty_on_hand,
-        }),
-      });
-    } else {
-      respuesta = await fetch(API_PRODUCTOS, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(producto),
-      });
+      if (editandoProducto) {
+        respuesta = await fetch(`${API_PRODUCTOS}/${mfrEditando}/${productEditando}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            description: producto.description,
+            price: producto.price,
+            qty_on_hand: producto.qty_on_hand,
+          }),
+        });
+      } else {
+        respuesta = await fetch(API_PRODUCTOS, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(producto),
+        });
+      }
+
+      const data = await respuesta.json();
+
+      if (!respuesta.ok) {
+        mensajeProducto.textContent = data.error || "Error en productos";
+        return;
+      }
+
+      mensajeProducto.textContent = editandoProducto
+        ? "Producto actualizado correctamente"
+        : "Producto creado correctamente";
+
+      resetFormularioProducto();
+      cargarProductos();
+    } catch (error) {
+      console.error(error);
+      mensajeProducto.textContent = "Error al guardar producto";
     }
-
-    const data = await respuesta.json();
-
-    if (!respuesta.ok) {
-      mensajeProducto.textContent = data.error || "Error en productos";
-      return;
-    }
-
-    mensajeProducto.textContent = editandoProducto
-      ? "Producto actualizado correctamente"
-      : "Producto creado correctamente";
-
-    resetFormularioProducto();
-    cargarProductos();
-  } catch (error) {
-    console.error(error);
-    mensajeProducto.textContent = "Error al guardar producto";
-  }
-});
+  });
+}
 
 function editarProducto(mfr_id, product_id, description, price, qty_on_hand) {
   editandoProducto = true;
@@ -311,10 +319,12 @@ function resetFormularioProducto() {
   btnCancelarProducto.style.display = "none";
 }
 
-btnCancelarProducto.addEventListener("click", () => {
-  resetFormularioProducto();
-  mensajeProducto.textContent = "Edición de producto cancelada";
-});
+if (btnCancelarProducto) {
+  btnCancelarProducto.addEventListener("click", () => {
+    resetFormularioProducto();
+    mensajeProducto.textContent = "Edición de producto cancelada";
+  });
+}
 
 /* =========================
    REPORTE
@@ -432,7 +442,6 @@ async function cargarConsulta(url) {
     });
   } catch (error) {
     console.error(error);
-    const mensaje = document.getElementById("mensajeConsulta");
     if (mensaje) mensaje.textContent = "Error al cargar la consulta";
   }
 }
@@ -506,9 +515,6 @@ if (formOrden) {
   });
 }
 
-cargarClientes();
-cargarProductos();
-
 /* =========================
    NAVEGACION ENTRE SECCIONES
 ========================= */
@@ -545,19 +551,26 @@ function activarDesdeTarjeta(idSeccion) {
 /* =========================
    LOGIN / LOGOUT
 ========================= */
-const API_LOGIN = "http://localhost:3000/auth/login";
-const API_PROFILE = "http://localhost:3000/auth/profile";
-
 const formLogin = document.getElementById("formLogin");
 const btnLogout = document.getElementById("btnLogout");
 const mensajeLogin = document.getElementById("mensajeLogin");
 const estadoSesion = document.getElementById("estadoSesion");
+const sistemaApp = document.getElementById("sistemaApp");
+
+function mostrarSistema() {
+  if (sistemaApp) sistemaApp.style.display = "block";
+}
+
+function ocultarSistema() {
+  if (sistemaApp) sistemaApp.style.display = "none";
+}
 
 async function verificarSesion() {
   const token = localStorage.getItem("token");
 
   if (!token) {
     if (estadoSesion) estadoSesion.textContent = "No has iniciado sesión";
+    ocultarSistema();
     return;
   }
 
@@ -573,15 +586,19 @@ async function verificarSesion() {
     if (!respuesta.ok) {
       if (estadoSesion) estadoSesion.textContent = "Sesión inválida o expirada";
       localStorage.removeItem("token");
+      ocultarSistema();
       return;
     }
 
     if (estadoSesion) {
       estadoSesion.textContent = `Sesión activa: ${data.user.username} (${data.user.role_name})`;
     }
+
+    mostrarSistema();
   } catch (error) {
     console.error(error);
     if (estadoSesion) estadoSesion.textContent = "Error al verificar sesión";
+    ocultarSistema();
   }
 }
 
@@ -611,6 +628,7 @@ if (formLogin) {
       localStorage.setItem("token", data.token);
       if (mensajeLogin) mensajeLogin.textContent = "Inicio de sesión exitoso";
       formLogin.reset();
+      mostrarSistema();
       verificarSesion();
     } catch (error) {
       console.error(error);
@@ -624,7 +642,10 @@ if (btnLogout) {
     localStorage.removeItem("token");
     if (mensajeLogin) mensajeLogin.textContent = "Sesión cerrada correctamente";
     if (estadoSesion) estadoSesion.textContent = "No has iniciado sesión";
+    ocultarSistema();
   });
 }
 
+cargarClientes();
+cargarProductos();
 verificarSesion();
